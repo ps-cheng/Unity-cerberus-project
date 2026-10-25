@@ -27,8 +27,13 @@ namespace Cerberus.Combat
 
         [Min(0)] public int damage = 10;
 
-        [Tooltip("揮劍起手時劍舉起的角度（純視覺）")]
-        public float windupAngle = 30f;
+        public float knockbackForce = 3f;
+
+        [Tooltip("前搖時劍往後收的距離（純視覺）")]
+        public float windupDistance = 0.2f;
+
+        [Tooltip("判定時劍往前刺出的距離（純視覺）")]
+        public float thrustDistance = 0.6f;
 
         public float TotalDuration => startupDuration + activeDuration + recoveryDuration;
     }

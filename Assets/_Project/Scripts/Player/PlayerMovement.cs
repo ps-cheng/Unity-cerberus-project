@@ -43,6 +43,7 @@ namespace Cerberus.Player
         private bool isJumpHeld;
         private float lastGroundedTime = float.NegativeInfinity;
         private float lastJumpRequestTime = float.NegativeInfinity;
+        private float knockbackEndTime = float.NegativeInfinity;
 
         private void Awake()
         {
@@ -72,6 +73,20 @@ namespace Cerberus.Player
             isJumpHeld = held;
         }
 
+        /// <param name="controlLockDuration">這段時間內不套用水平加速，讓擊退速度不會馬上被移動輸入抵銷</param>
+        public void ApplyKnockback(Vector2 velocity, float controlLockDuration)
+        {
+            body.linearVelocity = velocity;
+            knockbackEndTime = Time.time + controlLockDuration;
+        }
+
+        public void Teleport(Vector2 position)
+        {
+            body.position = position;
+            transform.position = position;
+            body.linearVelocity = Vector2.zero;
+        }
+
         private void FixedUpdate()
         {
             UpdateGrounded();
@@ -90,6 +105,9 @@ namespace Cerberus.Player
 
         private void ApplyHorizontalMovement()
         {
+            if (Time.time < knockbackEndTime)
+                return;
+
             float acceleration = IsGrounded ? groundAcceleration : airAcceleration;
             float targetSpeed = moveInput * moveSpeed;
             float newSpeed = Mathf.MoveTowards(body.linearVelocity.x, targetSpeed, acceleration * Time.fixedDeltaTime);

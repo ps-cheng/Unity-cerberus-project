@@ -7,7 +7,7 @@ namespace Cerberus.DebugTools
 {
     /// <summary>
     /// 原型期的除錯 HUD（IMGUI，不需要任何 UI 物件）：
-    /// 左上角顯示操作說明與目前狀態，右上角列出最近觸發的動作，角色頭上顯示目前招式。
+    /// 左上角顯示操作說明與目前狀態，右上角列出最近觸發的事件，角色頭上顯示目前招式。
     /// </summary>
     public class ActionHintHud : MonoBehaviour
     {
@@ -19,8 +19,10 @@ namespace Cerberus.DebugTools
 
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerCombat combat;
+        [SerializeField] private PlayerDamageReceiver damageReceiver;
+        [SerializeField] private Health playerHealth;
         [SerializeField] private Vector3 labelWorldOffset = new Vector3(0f, 1.6f, 0f);
-        [SerializeField] private int maxLogEntries = 6;
+        [SerializeField] private int maxLogEntries = 8;
         [SerializeField] private float logLifetime = 2.5f;
 
         private readonly List<ActionLogEntry> actionLog = new List<ActionLogEntry>();
@@ -39,6 +41,10 @@ namespace Cerberus.DebugTools
             movement.Jumped += HandleJumped;
             combat.ActionStarted += HandleActionStarted;
             combat.TargetHit += HandleTargetHit;
+            damageReceiver.Hurt += HandleHurt;
+            damageReceiver.Blocked += HandleBlocked;
+            damageReceiver.Died += HandleDied;
+            damageReceiver.Respawned += HandleRespawned;
         }
 
         private void OnDisable()
@@ -46,11 +52,19 @@ namespace Cerberus.DebugTools
             movement.Jumped -= HandleJumped;
             combat.ActionStarted -= HandleActionStarted;
             combat.TargetHit -= HandleTargetHit;
+            damageReceiver.Hurt -= HandleHurt;
+            damageReceiver.Blocked -= HandleBlocked;
+            damageReceiver.Died -= HandleDied;
+            damageReceiver.Respawned -= HandleRespawned;
         }
 
         private void HandleJumped() => AddLog("Jump");
         private void HandleActionStarted(CombatAction action) => AddLog(GetActionName(action));
         private void HandleTargetHit(Collider2D target) => AddLog($"Hit -> {target.name}");
+        private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
+        private void HandleBlocked() => AddLog("<color=cyan>Blocked!</color>");
+        private void HandleDied() => AddLog("<color=red>Died</color>");
+        private void HandleRespawned() => AddLog("Respawn");
 
         private void AddLog(string message)
         {
@@ -86,17 +100,32 @@ namespace Cerberus.DebugTools
 
         private void DrawStatusPanel()
         {
-            GUILayout.BeginArea(new Rect(10, 10, 360, 270), panelStyle);
+            GUILayout.BeginArea(new Rect(10, 10, 380, 300), panelStyle);
             GUILayout.Label("<b>Controls</b>", labelStyle);
             GUILayout.Label("A / D / Arrows   Move", labelStyle);
             GUILayout.Label("Space            Jump (hold = higher)", labelStyle);
-            GUILayout.Label("J / LMB          Light Attack", labelStyle);
-            GUILayout.Label("K / RMB          Heavy Attack", labelStyle);
-            GUILayout.Label("L (hold)          Block", labelStyle);
+            GUILayout.Label("J / Z / LMB      Light Attack", labelStyle);
+            GUILayout.Label("K / X / RMB      Heavy Attack", labelStyle);
+            GUILayout.Label($"L / C (hold)     Special ({combat.SpecialName})", labelStyle);
             GUILayout.Space(6);
+            GUILayout.Label($"<b>HP</b>     {playerHealth.CurrentHealth} / {playerHealth.MaxHealth}{GetStatusTags()}", labelStyle);
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);
             GUILayout.Label($"<b>Action</b> {GetActionName(combat.CurrentAction)}  {GetPhaseText()}", labelStyle);
             GUILayout.EndArea();
+        }
+
+        private string GetStatusTags()
+        {
+            if (damageReceiver.IsDead)
+                return "  <color=red>[DEAD]</color>";
+
+            string tags = string.Empty;
+            if (damageReceiver.IsStunned)
+                tags += "  <color=orange>[Stun]</color>";
+            if (damageReceiver.IsInvincible)
+                tags += "  <color=silver>[Invincible]</color>";
+
+            return tags;
         }
 
         private void DrawActionLog()
@@ -131,7 +160,7 @@ namespace Cerberus.DebugTools
 
         private string GetPhaseText()
         {
-            if (combat.CurrentPhase == ActionPhase.None || combat.IsBlocking)
+            if (combat.CurrentPhase == ActionPhase.None || combat.IsSpecialActive)
                 return string.Empty;
 
             string phaseName = combat.CurrentPhase switch
@@ -144,11 +173,11 @@ namespace Cerberus.DebugTools
             return $"[{phaseName} {combat.PhaseProgress:P0}]";
         }
 
-        private static string GetActionName(CombatAction action) => action switch
+        private string GetActionName(CombatAction action) => action switch
         {
-            CombatAction.LightAttack => "Light Attack",
-            CombatAction.HeavyAttack => "Heavy Attack",
-            CombatAction.Block => "Block",
+            CombatAction.LightAttack => "Light Thrust",
+            CombatAction.HeavyAttack => "Heavy Thrust",
+            CombatAction.Special => $"Special: {combat.SpecialName}",
             _ => "-"
         };
     }

@@ -6,39 +6,44 @@ using UnityEngine;
 namespace Cerberus.Player
 {
     /// <summary>
-    /// 處理弱攻擊、強攻擊與格檔的計時、階段切換與命中判定。
-    /// 只管「戰鬥狀態」，移動限制由 PlayerController 依 IsBusy 決定。
+    /// 處理弱攻擊、強攻擊與特殊動作的狀態切換及命中判定。
+    /// 特殊動作的具體內容交給 SpecialAbility，這裡只管「現在是不是在做特殊動作」。
+    /// 移動限制由 PlayerController 依這裡的狀態決定。
     /// </summary>
     public class PlayerCombat : MonoBehaviour
     {
         [Header("Attacks")]
         [SerializeField] private AttackData lightAttack = new AttackData
         {
-            displayName = "Light Attack",
+            displayName = "Light Thrust",
             startupDuration = 0.06f,
             activeDuration = 0.1f,
             recoveryDuration = 0.14f,
-            hitboxOffset = new Vector2(0.95f, 0.15f),
-            hitboxSize = new Vector2(1.2f, 0.9f),
+            hitboxOffset = new Vector2(1.15f, 0.35f),
+            hitboxSize = new Vector2(1.5f, 0.4f),
             damage = 10,
-            windupAngle = 20f
+            knockbackForce = 3f,
+            windupDistance = 0.15f,
+            thrustDistance = 0.6f
         };
 
         [SerializeField] private AttackData heavyAttack = new AttackData
         {
-            displayName = "Heavy Attack",
+            displayName = "Heavy Thrust",
             startupDuration = 0.28f,
             activeDuration = 0.16f,
             recoveryDuration = 0.5f,
-            hitboxOffset = new Vector2(1.35f, 0.3f),
-            hitboxSize = new Vector2(2.2f, 1.8f),
+            hitboxOffset = new Vector2(1.65f, 0.35f),
+            hitboxSize = new Vector2(2.5f, 0.8f),
             damage = 25,
-            windupAngle = 70f
+            knockbackForce = 8f,
+            windupDistance = 0.45f,
+            thrustDistance = 1.3f
         };
 
-        [Header("Block")]
-        [SerializeField] private Vector2 blockZoneOffset = new Vector2(0.6f, 0.2f);
-        [SerializeField] private Vector2 blockZoneSize = new Vector2(0.4f, 1.6f);
+        [Header("Special")]
+        [Tooltip("這顆頭的特殊動作，切換角色時會換成不同的實作")]
+        [SerializeField] private SpecialAbility specialAbility;
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hittableLayers;
@@ -48,25 +53,23 @@ namespace Cerberus.Player
         public AttackData CurrentAttack { get; private set; }
         public bool IsBusy => CurrentAction != CombatAction.None;
         public bool IsAttacking => CurrentAction == CombatAction.LightAttack || CurrentAction == CombatAction.HeavyAttack;
-        public bool IsBlocking => CurrentAction == CombatAction.Block;
+        public bool IsSpecialActive => CurrentAction == CombatAction.Special;
+        public string SpecialName => specialAbility.DisplayName;
+        public bool SpecialLocksMovement => specialAbility.LocksMovement;
 
         /// <summary>目前階段的進度 0~1，給視覺與 HUD 使用</summary>
         public float PhaseProgress { get; private set; }
-
-        /// <summary>目前招式（攻擊或格檔）作用範圍的世界座標中心</summary>
-        public Vector2 CurrentZoneCenter => GetZoneCenter(CurrentAction == CombatAction.Block ? blockZoneOffset : CurrentAttack.hitboxOffset);
-        public Vector2 CurrentZoneSize => CurrentAction == CombatAction.Block ? blockZoneSize : CurrentAttack.hitboxSize;
 
         public event Action<CombatAction> ActionStarted;
         public event Action<ActionPhase> PhaseChanged;
         public event Action<Collider2D> TargetHit;
 
-        private int actionFacing = 1;
+        private int attackFacing = 1;
         private float phaseTimer;
         private ContactFilter2D hitFilter;
         private readonly List<Collider2D> overlapResults = new List<Collider2D>();
-        // 同一次揮擊對同一目標只命中一次
-        private readonly HashSet<Collider2D> targetsHitThisSwing = new HashSet<Collider2D>();
+        // 同一次攻擊對同一目標只命中一次
+        private readonly HashSet<Collider2D> targetsHitThisAttack = new HashSet<Collider2D>();
 
         private void Awake()
         {
@@ -90,28 +93,62 @@ namespace Cerberus.Player
             if (CurrentAttack == null)
                 return false;
 
-            actionFacing = facing;
-            targetsHitThisSwing.Clear();
+            attackFacing = facing;
+            targetsHitThisAttack.Clear();
             CurrentAction = attackType;
             ActionStarted?.Invoke(attackType);
             EnterPhase(ActionPhase.Startup);
             return true;
         }
 
-        /// <summary>每幀呼叫：按住就進入格檔，放開就解除。攻擊中不會被打斷。</summary>
-        public void UpdateBlock(bool blockHeld, int facing)
+        /// <summary>每幀呼叫，把特殊鍵的狀態轉交給 SpecialAbility。攻擊中不會被打斷。</summary>
+        public void UpdateSpecial(bool pressed, bool held, int facing)
         {
-            if (blockHeld && !IsBusy)
+            if (IsAttacking)
+                return;
+
+            specialAbility.Tick(pressed, held, facing);
+
+            if (specialAbility.IsActive && !IsSpecialActive)
             {
-                actionFacing = facing;
-                CurrentAction = CombatAction.Block;
-                ActionStarted?.Invoke(CombatAction.Block);
+                CurrentAction = CombatAction.Special;
+                ActionStarted?.Invoke(CombatAction.Special);
                 EnterPhase(ActionPhase.Active);
             }
-            else if (!blockHeld && IsBlocking)
+            else if (!specialAbility.IsActive && IsSpecialActive)
             {
                 EndAction();
             }
+        }
+
+        /// <summary>受擊時強制中斷目前的招式</summary>
+        public void CancelAction()
+        {
+            if (IsSpecialActive)
+                specialAbility.Cancel();
+
+            if (IsBusy)
+                EndAction();
+        }
+
+        public bool TryNegateHit(DamageInfo info) => IsSpecialActive && specialAbility.TryNegateHit(info);
+
+        /// <summary>目前招式作用範圍的世界座標；沒有招式時回傳 false</summary>
+        public bool TryGetCurrentZone(out Vector2 center, out Vector2 size)
+        {
+            if (IsAttacking)
+            {
+                center = GetAttackZoneCenter();
+                size = CurrentAttack.hitboxSize;
+                return true;
+            }
+
+            if (IsSpecialActive)
+                return specialAbility.TryGetZone(out center, out size);
+
+            center = default;
+            size = default;
+            return false;
         }
 
         private void Update()
@@ -169,30 +206,35 @@ namespace Cerberus.Player
             _ => 0f
         };
 
-        private Vector2 GetZoneCenter(Vector2 offset)
+        private Vector2 GetAttackZoneCenter()
         {
-            return (Vector2)transform.position + new Vector2(offset.x * actionFacing, offset.y);
+            Vector2 offset = CurrentAttack.hitboxOffset;
+            return (Vector2)transform.position + new Vector2(offset.x * attackFacing, offset.y);
         }
 
         private void DetectHits()
         {
-            Physics2D.OverlapBox(CurrentZoneCenter, CurrentZoneSize, 0f, hitFilter, overlapResults);
+            Physics2D.OverlapBox(GetAttackZoneCenter(), CurrentAttack.hitboxSize, 0f, hitFilter, overlapResults);
 
             foreach (Collider2D target in overlapResults)
             {
-                if (!targetsHitThisSwing.Add(target))
+                if (!targetsHitThisAttack.Add(target))
                     continue;
 
-                if (target.TryGetComponent(out IDamageable damageable))
-                    damageable.TakeDamage(CurrentAttack.damage, new Vector2(actionFacing, 0f));
+                IDamageable damageable = target.GetComponentInParent<IDamageable>();
+                if (damageable == null)
+                    continue;
 
-                TargetHit?.Invoke(target);
+                var info = new DamageInfo(CurrentAttack.damage, transform.position, CurrentAttack.knockbackForce);
+
+                if (damageable.TakeDamage(info) == DamageResult.Hit)
+                    TargetHit?.Invoke(target);
             }
         }
 
         private void OnDrawGizmosSelected()
         {
-            // 未執行時在 Scene 視窗預覽各招範圍（以面向右為準）
+            // 未執行時在 Scene 視窗預覽兩種攻擊的範圍（以面向右為準）
             if (Application.isPlaying)
                 return;
 
@@ -201,8 +243,6 @@ namespace Cerberus.Player
             Gizmos.DrawWireCube(origin + lightAttack.hitboxOffset, lightAttack.hitboxSize);
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(origin + heavyAttack.hitboxOffset, heavyAttack.hitboxSize);
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireCube(origin + blockZoneOffset, blockZoneSize);
         }
     }
 }
