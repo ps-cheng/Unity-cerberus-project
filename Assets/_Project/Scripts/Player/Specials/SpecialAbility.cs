@@ -12,6 +12,10 @@ namespace Cerberus.Player
         public abstract string DisplayName { get; }
         public bool IsActive { get; protected set; }
         public virtual bool LocksMovement => true;
+        public virtual bool AllowsTurning => false;
+
+        /// <summary>給 HUD 顯示的附加狀態，例如「Parry Window」</summary>
+        public virtual string StatusText => string.Empty;
 
         /// <summary>
         /// 每幀由 PlayerCombat 呼叫。同時傳入「剛按下」與「按住中」，
@@ -29,7 +33,10 @@ namespace Cerberus.Player
             return false;
         }
 
-        /// <summary>受到攻擊時詢問：這次傷害是否被特殊動作化解。</summary>
-        public virtual bool TryNegateHit(DamageInfo info) => false;
+        /// <summary>
+        /// 受到攻擊時詢問特殊動作如何處理這一下。可以修改 info.amount 來減傷。
+        /// 回傳 Hit 代表照常受傷；Blocked 代表減傷後的傷害；Parried 代表完全化解。
+        /// </summary>
+        public virtual DamageResult ResolveIncomingHit(ref DamageInfo info) => DamageResult.Hit;
     }
 }

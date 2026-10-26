@@ -28,7 +28,7 @@ namespace Cerberus.Player
         {
             if (damageReceiver.IsStunned)
             {
-                movement.SetMoveInput(0f, allowTurn: false);
+                movement.SetMoveInput(0f);
                 return;
             }
 
@@ -58,7 +58,12 @@ namespace Cerberus.Player
             // 地面上出招或使用會定身的特殊動作時原地站定；空中則保留水平慣性與方向控制
             bool actionLocksMovement = combat.IsAttacking || (combat.IsSpecialActive && combat.SpecialLocksMovement);
             bool isRooted = actionLocksMovement && movement.IsGrounded;
-            movement.SetMoveInput(isRooted ? 0f : input.MoveInput, allowTurn: !combat.IsBusy);
+            movement.SetMoveInput(isRooted ? 0f : input.MoveInput);
+
+            // 攻擊中鎖定面向；格檔這類特殊動作可以原地轉身，舉盾後才發現敵人在背後也來得及轉
+            bool canTurn = !combat.IsAttacking && (!combat.IsSpecialActive || combat.SpecialAllowsTurning);
+            if (canTurn)
+                movement.TurnTowards(input.MoveInput);
 
             if (input.JumpPressed && !combat.IsBusy)
                 movement.RequestJump();

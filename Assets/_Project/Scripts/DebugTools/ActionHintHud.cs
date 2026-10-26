@@ -42,7 +42,8 @@ namespace Cerberus.DebugTools
             combat.ActionStarted += HandleActionStarted;
             combat.TargetHit += HandleTargetHit;
             damageReceiver.Hurt += HandleHurt;
-            damageReceiver.Blocked += HandleBlocked;
+            damageReceiver.Guarded += HandleGuarded;
+            damageReceiver.Parried += HandleParried;
             damageReceiver.Died += HandleDied;
             damageReceiver.Respawned += HandleRespawned;
         }
@@ -53,7 +54,8 @@ namespace Cerberus.DebugTools
             combat.ActionStarted -= HandleActionStarted;
             combat.TargetHit -= HandleTargetHit;
             damageReceiver.Hurt -= HandleHurt;
-            damageReceiver.Blocked -= HandleBlocked;
+            damageReceiver.Guarded -= HandleGuarded;
+            damageReceiver.Parried -= HandleParried;
             damageReceiver.Died -= HandleDied;
             damageReceiver.Respawned -= HandleRespawned;
         }
@@ -62,7 +64,8 @@ namespace Cerberus.DebugTools
         private void HandleActionStarted(CombatAction action) => AddLog(GetActionName(action));
         private void HandleTargetHit(Collider2D target) => AddLog($"Hit -> {target.name}");
         private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
-        private void HandleBlocked() => AddLog("<color=cyan>Blocked!</color>");
+        private void HandleGuarded(int damageTaken) => AddLog($"<color=cyan>Guard -{damageTaken}</color>");
+        private void HandleParried() => AddLog("<color=yellow><b>PARRY!</b></color>");
         private void HandleDied() => AddLog("<color=red>Died</color>");
         private void HandleRespawned() => AddLog("Respawn");
 
@@ -100,13 +103,13 @@ namespace Cerberus.DebugTools
 
         private void DrawStatusPanel()
         {
-            GUILayout.BeginArea(new Rect(10, 10, 380, 300), panelStyle);
+            GUILayout.BeginArea(new Rect(10, 10, 460, 300), panelStyle);
             GUILayout.Label("<b>Controls</b>", labelStyle);
             GUILayout.Label("A / D / Arrows   Move", labelStyle);
             GUILayout.Label("Space            Jump (hold = higher)", labelStyle);
             GUILayout.Label("J / Z / LMB      Light Attack", labelStyle);
             GUILayout.Label("K / X / RMB      Heavy Attack", labelStyle);
-            GUILayout.Label($"L / C (hold)     Special ({combat.SpecialName})", labelStyle);
+            GUILayout.Label($"L / C            Special ({combat.SpecialName}: tap = parry, hold = guard)", labelStyle);
             GUILayout.Space(6);
             GUILayout.Label($"<b>HP</b>     {playerHealth.CurrentHealth} / {playerHealth.MaxHealth}{GetStatusTags()}", labelStyle);
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);
@@ -173,11 +176,17 @@ namespace Cerberus.DebugTools
             return $"[{phaseName} {combat.PhaseProgress:P0}]";
         }
 
+        private string GetSpecialStatus()
+        {
+            string status = combat.SpecialStatusText;
+            return string.IsNullOrEmpty(status) ? string.Empty : $" ({status})";
+        }
+
         private string GetActionName(CombatAction action) => action switch
         {
             CombatAction.LightAttack => "Light Thrust",
             CombatAction.HeavyAttack => "Heavy Thrust",
-            CombatAction.Special => $"Special: {combat.SpecialName}",
+            CombatAction.Special => $"Special: {combat.SpecialName}{GetSpecialStatus()}",
             _ => "-"
         };
     }

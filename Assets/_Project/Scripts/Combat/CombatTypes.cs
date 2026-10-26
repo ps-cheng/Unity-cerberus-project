@@ -26,7 +26,10 @@ namespace Cerberus.Combat
     public enum DamageResult
     {
         Ignored,
+        // 被擋下但仍有部分傷害（一般格檔）
         Blocked,
+        // 完全化解，攻擊方會陷入硬直（完美格檔）
+        Parried,
         Hit
     }
 }

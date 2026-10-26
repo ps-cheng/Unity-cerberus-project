@@ -19,6 +19,9 @@ namespace Cerberus.Enemies
         [Header("Hit Reaction")]
         [SerializeField] private float hurtStunDuration = 0.25f;
         [SerializeField] private float hurtFlashDuration = 0.1f;
+        [Tooltip("攻擊被完美格檔後的硬直，也就是玩家反擊的機會")]
+        [SerializeField] private float parriedStaggerDuration = 1.2f;
+        [SerializeField] private Color staggerColor = new Color(0.55f, 0.75f, 1f);
 
         [Header("Visual")]
         [SerializeField] private Transform visualRoot;
@@ -33,12 +36,14 @@ namespace Cerberus.Enemies
         protected Rigidbody2D Body { get; private set; }
         protected int FacingDirection { get; private set; } = 1;
         protected bool IsStunned => Time.time < stunnedUntil;
+        protected bool IsStaggered => Time.time < staggeredUntil;
         protected Color BaseColor { get; private set; }
         protected LayerMask TargetLayers => targetLayers;
         /// <summary>外觀的縮放（不含面向翻轉），子類別可用來做蓄力壓縮等簡易動畫</summary>
         protected Vector2 VisualScale { get; set; } = Vector2.one;
 
         private float stunnedUntil;
+        private float staggeredUntil;
         private float flashUntil;
 
         protected virtual void Awake()
@@ -52,7 +57,7 @@ namespace Cerberus.Enemies
         protected virtual void Update()
         {
             UpdateTarget();
-            bodyRenderer.color = Time.time < flashUntil ? Color.white : GetBodyColor();
+            bodyRenderer.color = GetCurrentColor();
             visualRoot.localScale = new Vector3(FacingDirection * VisualScale.x, VisualScale.y, 1f);
         }
 
@@ -63,13 +68,29 @@ namespace Cerberus.Enemies
 
             Health.ApplyDamage(info.amount);
             flashUntil = Time.time + hurtFlashDuration;
-            stunnedUntil = Time.time + hurtStunDuration;
+            // 取較長者：被格檔硬直中挨打，不會因此縮短硬直
+            stunnedUntil = Mathf.Max(stunnedUntil, Time.time + hurtStunDuration);
             OnHurt(info);
             return DamageResult.Hit;
         }
 
         /// <summary>受擊後的個別反應（擊退、打斷招式）</summary>
         protected virtual void OnHurt(DamageInfo info) { }
+
+        /// <summary>自己的攻擊被玩家完美格檔時呼叫，進入較長的硬直</summary>
+        protected void ApplyParriedStagger()
+        {
+            stunnedUntil = staggeredUntil = Time.time + parriedStaggerDuration;
+            flashUntil = Time.time + hurtFlashDuration;
+        }
+
+        private Color GetCurrentColor()
+        {
+            if (Time.time < flashUntil)
+                return Color.white;
+
+            return IsStaggered ? staggerColor : GetBodyColor();
+        }
 
         /// <summary>依目前狀態決定身體顏色，用來預告攻擊</summary>
         protected virtual Color GetBodyColor() => BaseColor;

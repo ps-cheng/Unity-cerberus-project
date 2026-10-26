@@ -65,6 +65,9 @@ namespace Cerberus.Enemies
         {
             get
             {
+                if (IsStaggered)
+                    return "Staggered";
+
                 if (IsStunned)
                     return "Hurt";
 
@@ -199,6 +202,13 @@ namespace Cerberus.Enemies
             // 目標無敵時（Ignored）不算命中，判定期間內仍可再嘗試
             if (result != DamageResult.Ignored)
                 hasHitThisAttack = true;
+
+            // 被完美格檔：中斷出招，硬直結束後重新靠近
+            if (result == DamageResult.Parried)
+            {
+                ApplyParriedStagger();
+                ChangeState(State.Approach);
+            }
         }
 
         private Vector2 GetAttackZoneCenter()

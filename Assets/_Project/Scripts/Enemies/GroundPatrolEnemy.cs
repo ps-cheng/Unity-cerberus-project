@@ -38,7 +38,7 @@ namespace Cerberus.Enemies
         [SerializeField] private Color windupColor = new Color(1f, 0.85f, 0.2f);
 
         [Header("Hit Reaction")]
-        [Tooltip("撞上玩家的盾時被彈開的速度")]
+        [Tooltip("撞上玩家的盾（格檔或完美格檔）時被彈開的速度")]
         [SerializeField] private float blockedBounceSpeed = 5f;
 
         [Header("Ground Check")]
@@ -182,8 +182,11 @@ namespace Cerberus.Enemies
 
         private void HandleContactResolved(DamageResult result)
         {
-            if (result != DamageResult.Blocked)
+            if (result == DamageResult.Hit)
                 return;
+
+            if (result == DamageResult.Parried)
+                ApplyParriedStagger();
 
             Body.linearVelocity = new Vector2(-FacingDirection * blockedBounceSpeed, 3f);
             ChangeState(State.Recover);

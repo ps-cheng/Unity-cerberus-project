@@ -56,6 +56,8 @@ namespace Cerberus.Player
         public bool IsSpecialActive => CurrentAction == CombatAction.Special;
         public string SpecialName => specialAbility.DisplayName;
         public bool SpecialLocksMovement => specialAbility.LocksMovement;
+        public bool SpecialAllowsTurning => specialAbility.AllowsTurning;
+        public string SpecialStatusText => specialAbility.StatusText;
 
         /// <summary>目前階段的進度 0~1，給視覺與 HUD 使用</summary>
         public float PhaseProgress { get; private set; }
@@ -131,7 +133,8 @@ namespace Cerberus.Player
                 EndAction();
         }
 
-        public bool TryNegateHit(DamageInfo info) => IsSpecialActive && specialAbility.TryNegateHit(info);
+        // 不限於特殊動作進行中才詢問：像完美格檔這種「點一下」的判定，放開後仍可能有效
+        public DamageResult ResolveIncomingHit(ref DamageInfo info) => specialAbility.ResolveIncomingHit(ref info);
 
         /// <summary>目前招式作用範圍的世界座標；沒有招式時回傳 false</summary>
         public bool TryGetCurrentZone(out Vector2 center, out Vector2 size)

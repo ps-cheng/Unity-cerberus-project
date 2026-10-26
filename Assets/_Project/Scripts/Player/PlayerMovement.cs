@@ -51,13 +51,13 @@ namespace Cerberus.Player
             baseGravityScale = body.gravityScale;
         }
 
-        /// <param name="allowTurn">攻擊或格檔中鎖定面向，避免招式中途轉身</param>
-        public void SetMoveInput(float input, bool allowTurn)
-        {
-            moveInput = Mathf.Clamp(input, -1f, 1f);
+        public void SetMoveInput(float input) => moveInput = Mathf.Clamp(input, -1f, 1f);
 
-            if (allowTurn && Mathf.Abs(moveInput) > 0.01f)
-                FacingDirection = moveInput > 0f ? 1 : -1;
+        /// <summary>轉向與移動分開，才能做到「站在原地只轉身」</summary>
+        public void TurnTowards(float direction)
+        {
+            if (Mathf.Abs(direction) > 0.01f)
+                FacingDirection = direction > 0f ? 1 : -1;
         }
 
         public void RequestJump() => lastJumpRequestTime = Time.time;

@@ -35,16 +35,59 @@ namespace Cerberus.Player
         [SerializeField] private Color recoveryColor = new Color(0.45f, 0.45f, 0.5f);
         [SerializeField] private Color specialColor = new Color(0.3f, 0.75f, 1f);
 
+        [Header("Guard Feedback")]
+        [Tooltip("完美格檔判定時間內盾牌的顏色，讓玩家看得出按下的時機")]
+        [SerializeField] private Color parryWindowShieldColor = new Color(0.85f, 0.95f, 1f);
+        [SerializeField] private Color guardFlashColor = Color.white;
+        [SerializeField] private Color parryFlashColor = new Color(1f, 0.9f, 0.2f);
+        [SerializeField] private float guardFlashDuration = 0.12f;
+        [SerializeField] private float parryFlashDuration = 0.3f;
+        [Tooltip("完美格檔時盾牌放大的倍率")]
+        [SerializeField] private float parryShieldPopScale = 1.6f;
+
         [Header("Invincibility Blink")]
         [SerializeField] private float blinkFrequency = 15f;
 
         private Vector2 swordRestPosition;
         private SpriteRenderer[] visualRenderers;
+        private SpriteRenderer shieldRenderer;
+        private ShieldBlockSpecial shieldBlock;
+        private Color shieldBaseColor;
+        private Color shieldFlashColor;
+        private float shieldFlashStartTime = float.NegativeInfinity;
+        private float shieldFlashDuration;
+        private float shieldPopScale = 1f;
 
         private void Awake()
         {
             swordRestPosition = swordPivot.localPosition;
             visualRenderers = visualRoot.GetComponentsInChildren<SpriteRenderer>();
+            shieldRenderer = shieldPivot.GetComponentInChildren<SpriteRenderer>();
+            shieldBaseColor = shieldRenderer.color;
+            shieldBlock = GetComponent<ShieldBlockSpecial>();
+        }
+
+        private void OnEnable()
+        {
+            damageReceiver.Guarded += HandleGuarded;
+            damageReceiver.Parried += HandleParried;
+        }
+
+        private void OnDisable()
+        {
+            damageReceiver.Guarded -= HandleGuarded;
+            damageReceiver.Parried -= HandleParried;
+        }
+
+        private void HandleGuarded(int damageTaken) => StartShieldFlash(guardFlashColor, guardFlashDuration, 1f);
+        private void HandleParried() => StartShieldFlash(parryFlashColor, parryFlashDuration, parryShieldPopScale);
+
+        private void StartShieldFlash(Color color, float duration, float popScale)
+        {
+            shieldFlashColor = color;
+            shieldFlashDuration = duration;
+            shieldPopScale = popScale;
+            shieldFlashStartTime = Time.time;
         }
 
         private void LateUpdate()
@@ -93,6 +136,19 @@ namespace Cerberus.Player
         {
             Vector2 target = combat.IsSpecialActive ? shieldBlockPosition : shieldRestPosition;
             shieldPivot.localPosition = Vector2.Lerp(shieldPivot.localPosition, target, shieldMoveSpeed * Time.deltaTime);
+
+            // 格檔成功時閃色並放大，隨時間淡回原狀
+            float flashProgress = (Time.time - shieldFlashStartTime) / shieldFlashDuration;
+            if (flashProgress < 1f)
+            {
+                shieldRenderer.color = Color.Lerp(shieldFlashColor, shieldBaseColor, flashProgress);
+                shieldPivot.localScale = Vector3.one * Mathf.Lerp(shieldPopScale, 1f, flashProgress);
+                return;
+            }
+
+            bool isParryWindow = shieldBlock != null && shieldBlock.IsParryWindowActive;
+            shieldRenderer.color = isParryWindow ? parryWindowShieldColor : shieldBaseColor;
+            shieldPivot.localScale = Vector3.one;
         }
 
         private Color GetBodyColor()
@@ -114,7 +170,7 @@ namespace Cerberus.Player
             bool isVisible = !damageReceiver.IsDead;
 
             // 無敵時間內閃爍
-            if (isVisible && damageReceiver.IsInvincible)
+            if (isVisible && damageReceiver.IsBlinking)
                 isVisible = Mathf.FloorToInt(Time.time * blinkFrequency) % 2 == 0;
 
             foreach (SpriteRenderer spriteRenderer in visualRenderers)
