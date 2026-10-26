@@ -5,9 +5,10 @@ namespace Cerberus.Player
 {
     /// <summary>
     /// 第一顆頭的特殊動作：舉起左手的盾，只對來自正面的攻擊有效。
-    /// - 完美格檔（Parry）：按下後短時間內被打中，完全化解並讓敵人陷入硬直。點一下就能觸發，不需要按住。
+    /// - 完美格檔（Parry）：按下後極短時間內被打中，完全化解並讓敵人陷入硬直。
     /// - 一般格檔（Guard）：按住期間被打中，傷害依比例減少。
-    /// 連打時完美格檔的判定時間會縮短，避免靠狂按觸發（參考 Sekiro 的彈刀設計）。
+    /// - 揮空懲罰：完美格檔的判定時間結束卻沒擋到攻擊，一段時間內再按也不會開啟判定（仍可一般格檔）。
+    /// 最佳打法是抓準時機按下後繼續按住：抓準了無傷，抓不準至少還有一般格檔。
     /// </summary>
     public class ShieldBlockSpecial : SpecialAbility
     {
@@ -20,16 +21,15 @@ namespace Cerberus.Player
         [SerializeField, Range(0f, 1f)] private float guardDamageReduction = 0.7f;
 
         [Header("Parry (按下的瞬間)")]
-        [Tooltip("按下後這段時間內被打中算完美格檔（0.2 秒 ≈ 60fps 的 12 幀）")]
-        [SerializeField] private float parryWindow = 0.2f;
-        [Tooltip("連打時的完美格檔時間（約 4 幀）")]
-        [SerializeField] private float spamParryWindow = 0.067f;
-        [Tooltip("放開後這段時間內再按下，會被視為連打")]
-        [SerializeField] private float spamPenaltyDuration = 0.5f;
+        [Tooltip("按下後這段時間內被打中算完美格檔（0.133 秒 ≈ 60fps 的 8 幀）")]
+        [SerializeField] private float parryWindow = 0.133f;
+        [Tooltip("判定時間結束仍沒擋到攻擊時，這段時間內按下不會再開啟完美格檔判定")]
+        [SerializeField] private float whiffLockoutDuration = 0.5f;
 
         public override string DisplayName => "Block";
         public override bool AllowsTurning => true;
-        public bool IsParryWindowActive => Time.time - lastPressTime <= currentParryWindow;
+        public bool IsParryWindowActive => Time.time - parryWindowStartTime <= parryWindow;
+        public bool IsParryLocked => Time.time < parryLockedUntil;
 
         public override string StatusText
         {
@@ -38,39 +38,35 @@ namespace Cerberus.Player
                 if (IsParryWindowActive)
                     return "Parry Window";
 
-                return IsActive ? "Guard" : string.Empty;
+                if (!IsActive)
+                    return string.Empty;
+
+                return IsParryLocked ? "Guard, Parry Locked" : "Guard";
             }
         }
 
         private int facing = 1;
-        private float lastPressTime = float.NegativeInfinity;
-        private float lastReleaseTime = float.NegativeInfinity;
-        private float currentParryWindow;
+        private float parryWindowStartTime = float.NegativeInfinity;
+        private float parryLockedUntil = float.NegativeInfinity;
 
         public override void Tick(bool pressed, bool held, int currentFacing)
         {
             facing = currentFacing;
 
-            if (pressed)
+            if (pressed && !IsParryLocked)
             {
-                bool isSpamming = Time.time - lastReleaseTime < spamPenaltyDuration;
-                currentParryWindow = isSpamming ? spamParryWindow : parryWindow;
-                lastPressTime = Time.time;
+                parryWindowStartTime = Time.time;
+                // 先假設會揮空，從判定結束起算鎖定；成功格檔時再解除
+                parryLockedUntil = Time.time + parryWindow + whiffLockoutDuration;
             }
-
-            if (IsActive && !held)
-                lastReleaseTime = Time.time;
 
             IsActive = held;
         }
 
         public override void Cancel()
         {
-            if (IsActive)
-                lastReleaseTime = Time.time;
-
             IsActive = false;
-            lastPressTime = float.NegativeInfinity;
+            parryWindowStartTime = float.NegativeInfinity;
         }
 
         public override bool TryGetZone(out Vector2 center, out Vector2 size)
@@ -89,6 +85,9 @@ namespace Cerberus.Player
 
             if (IsParryWindowActive)
             {
+                // 成功就不算揮空，可以馬上接下一次完美格檔
+                parryWindowStartTime = float.NegativeInfinity;
+                parryLockedUntil = float.NegativeInfinity;
                 info.amount = 0;
                 return DamageResult.Parried;
             }

@@ -787,6 +787,13 @@ MonoBehaviour:
   activeColor: {r: 1, g: 0.25, b: 0.2, a: 1}
   recoveryColor: {r: 0.45, g: 0.45, b: 0.5, a: 1}
   specialColor: {r: 0.3, g: 0.75, b: 1, a: 1}
+  parryWindowShieldColor: {r: 0.85, g: 0.95, b: 1, a: 1}
+  parryLockedShieldColor: {r: 0.25, g: 0.3, b: 0.4, a: 1}
+  guardFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  parryFlashColor: {r: 1, g: 0.9, b: 0.2, a: 1}
+  guardFlashDuration: 0.12
+  parryFlashDuration: 0.3
+  parryShieldPopScale: 1.6
   blinkFrequency: 15
 --- !u!114 &525042483
 MonoBehaviour:
@@ -916,6 +923,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.ShieldBlockSpecial
   zoneOffset: {x: 0.6, y: 0.2}
   zoneSize: {x: 0.4, y: 1.6}
+  guardDamageReduction: 0.7
+  parryWindow: 0.133
+  whiffLockoutDuration: 0.5
 --- !u!114 &525042489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,8 +940,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.PlayerDamageReceiver
   invincibilityDuration: 1
   hitStunDuration: 0.3
-  blockPushbackSpeed: 3
-  blockGraceDuration: 0.25
+  guardPushbackSpeed: 3
+  guardGraceDuration: 0.25
   respawnDelay: 1
 --- !u!114 &525042490
 MonoBehaviour:

@@ -49,6 +49,10 @@ namespace Cerberus.Enemies
         [Tooltip("蓄力時身體壓扁的比例，出招時再往前伸展")]
         [SerializeField] private Vector2 windupSquashScale = new Vector2(1.15f, 0.8f);
         [SerializeField] private Vector2 attackStretchScale = new Vector2(1.3f, 0.9f);
+        [Tooltip("出招前最後這段時間身體停止閃爍並轉白，作為格檔時機的提示。" +
+                 "略長於人的反應時間（約 0.2 秒），看到再按剛好落在完美格檔的判定內")]
+        [SerializeField] private float attackCueDuration = 0.25f;
+        [SerializeField] private Color attackCueColor = Color.white;
         [SerializeField] private Color attackColor = new Color(1f, 0.3f, 0.2f);
 
         public ActionPhase CurrentPhase => state switch
@@ -274,6 +278,9 @@ namespace Cerberus.Enemies
             switch (state)
             {
                 case State.Windup:
+                    if (stateTimer >= attack.startupDuration - attackCueDuration)
+                        return attackCueColor;
+
                     float frequency = Mathf.Lerp(telegraphBlinkStartFrequency, telegraphBlinkEndFrequency, PhaseProgress);
                     bool isHighlighted = Mathf.Repeat(stateTimer * frequency, 1f) < 0.5f;
                     return isHighlighted ? telegraphColor : BaseColor;
