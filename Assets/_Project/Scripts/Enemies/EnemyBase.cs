@@ -34,6 +34,9 @@ namespace Cerberus.Enemies
         protected int FacingDirection { get; private set; } = 1;
         protected bool IsStunned => Time.time < stunnedUntil;
         protected Color BaseColor { get; private set; }
+        protected LayerMask TargetLayers => targetLayers;
+        /// <summary>外觀的縮放（不含面向翻轉），子類別可用來做蓄力壓縮等簡易動畫</summary>
+        protected Vector2 VisualScale { get; set; } = Vector2.one;
 
         private float stunnedUntil;
         private float flashUntil;
@@ -50,6 +53,7 @@ namespace Cerberus.Enemies
         {
             UpdateTarget();
             bodyRenderer.color = Time.time < flashUntil ? Color.white : GetBodyColor();
+            visualRoot.localScale = new Vector3(FacingDirection * VisualScale.x, VisualScale.y, 1f);
         }
 
         public DamageResult TakeDamage(DamageInfo info)
@@ -81,7 +85,6 @@ namespace Cerberus.Enemies
                 return;
 
             FacingDirection = direction > 0f ? 1 : -1;
-            visualRoot.localScale = new Vector3(FacingDirection, 1f, 1f);
         }
 
         protected float GetDirectionToTarget() => Mathf.Sign(Target.position.x - transform.position.x);

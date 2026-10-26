@@ -10,7 +10,7 @@ namespace Cerberus.Player
     /// 特殊動作的具體內容交給 SpecialAbility，這裡只管「現在是不是在做特殊動作」。
     /// 移動限制由 PlayerController 依這裡的狀態決定。
     /// </summary>
-    public class PlayerCombat : MonoBehaviour
+    public class PlayerCombat : MonoBehaviour, ICombatZoneSource
     {
         [Header("Attacks")]
         [SerializeField] private AttackData lightAttack = new AttackData
