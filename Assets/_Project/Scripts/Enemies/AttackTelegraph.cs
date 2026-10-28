@@ -23,15 +23,20 @@ namespace Cerberus.Enemies
 
         public bool IsCueActive(float elapsed, float windupDuration) => elapsed >= windupDuration - cueDuration;
 
+        /// <summary>閃爍中目前是否處於亮起的半週期</summary>
+        public bool IsBlinkHighlighted(float elapsed, float windupDuration)
+        {
+            float progress = windupDuration > 0f ? Mathf.Clamp01(elapsed / windupDuration) : 1f;
+            float frequency = Mathf.Lerp(blinkStartFrequency, blinkEndFrequency, progress);
+            return Mathf.Repeat(elapsed * frequency, 1f) < 0.5f;
+        }
+
         public Color Evaluate(Color baseColor, float elapsed, float windupDuration)
         {
             if (IsCueActive(elapsed, windupDuration))
                 return cueColor;
 
-            float progress = windupDuration > 0f ? Mathf.Clamp01(elapsed / windupDuration) : 1f;
-            float frequency = Mathf.Lerp(blinkStartFrequency, blinkEndFrequency, progress);
-            bool isHighlighted = Mathf.Repeat(elapsed * frequency, 1f) < 0.5f;
-            return isHighlighted ? warningColor : baseColor;
+            return IsBlinkHighlighted(elapsed, windupDuration) ? warningColor : baseColor;
         }
     }
 }

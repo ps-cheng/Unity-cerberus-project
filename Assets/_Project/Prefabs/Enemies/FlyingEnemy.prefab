@@ -195,7 +195,7 @@ GameObject:
   - component: {fileID: 1344167986057502493}
   - component: {fileID: 7556056623671572751}
   m_Layer: 10
-  m_Name: AimLine
+  m_Name: LaserLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,22 +276,22 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.08
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
+        inWeight: 0
+        outWeight: 0
       - serializedVersion: 3
         time: 1
-        value: 0.02
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -326,7 +326,7 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 0
+    numCapVertices: 2
     alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}
@@ -494,21 +494,33 @@ MonoBehaviour:
   bodyRenderer: {fileID: 6165138154806091315}
   patrolDistance: 2.5
   patrolSpeed: 2
-  projectilePrefab: {fileID: 1801075109837612917, guid: 52938d4f92b42d84bab6d2a30f547b95, type: 3}
   firePoint: {fileID: 29303051299745167}
-  projectileParent: {fileID: 0}
-  windupDuration: 0.8
+  aimDuration: 0.6
+  chargeDuration: 0.6
+  beamDuration: 0.1
   recoverDuration: 0.6
   fireCooldown: 1.5
+  laserRange: 12
+  laserDamage: 10
+  laserKnockback: 6
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  reflectedDamageMultiplier: 2
+  reflectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
   telegraph:
     warningColor: {r: 1, g: 0.85, b: 0.2, a: 1}
     blinkStartFrequency: 4
     blinkEndFrequency: 14
     cueDuration: 0.25
     cueColor: {r: 1, g: 1, b: 1, a: 1}
-  windupSwellScale: {x: 1.35, y: 1.35}
-  aimLine: {fileID: 7556056623671572751}
-  aimLineLength: 6
+  chargeSwellScale: {x: 1.35, y: 1.35}
+  laserLine: {fileID: 7556056623671572751}
+  aimColor: {r: 1, g: 0.15, b: 0.2, a: 1}
+  aimWidth: 0.03
+  cueWidth: 0.06
+  beamWidth: 0.3
+  beamColor: {r: 1, g: 0.35, b: 0.4, a: 1}
 --- !u!114 &3176989109366916073
 MonoBehaviour:
   m_ObjectHideFlags: 0
