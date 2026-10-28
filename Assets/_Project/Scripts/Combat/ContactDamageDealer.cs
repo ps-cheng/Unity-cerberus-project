@@ -31,6 +31,14 @@ namespace Cerberus.Combat
             targetFilter.useTriggers = true;
         }
 
+        /// <summary>改變攻擊對象與傷害，例如子彈被反彈後改打敵人</summary>
+        public void Retarget(LayerMask newTargetLayers, float damageMultiplier)
+        {
+            targetLayers = newTargetLayers;
+            targetFilter.SetLayerMask(newTargetLayers);
+            damage = Mathf.RoundToInt(damage * damageMultiplier);
+        }
+
         private void FixedUpdate()
         {
             ownCollider.Overlap(targetFilter, overlapResults);

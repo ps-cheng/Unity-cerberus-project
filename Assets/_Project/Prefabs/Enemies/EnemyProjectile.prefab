@@ -257,3 +257,11 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 256
+  reflectedTargetLayers:
+    serializedVersion: 2
+    m_Bits: 1024
+  reflectedLayerName: PlayerProjectile
+  reflectedSpeedMultiplier: 1.5
+  reflectedDamageMultiplier: 2
+  reflectedHomingTurnRate: 360
+  reflectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
