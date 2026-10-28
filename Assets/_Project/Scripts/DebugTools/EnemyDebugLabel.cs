@@ -34,7 +34,8 @@ namespace Cerberus.DebugTools
             Vector3 screenPoint = mainCamera.WorldToScreenPoint(enemy.transform.position + labelWorldOffset);
             Rect rect = new Rect(screenPoint.x - 100, Screen.height - screenPoint.y - 20, 200, 40);
             string stateColor = enemy.HasTarget ? "#FF6060" : "#A0FFA0";
-            GUI.Label(rect, $"<color={stateColor}>{enemy.StateName}</color>\nHP {enemy.Health.CurrentHealth}/{enemy.Health.MaxHealth}", labelStyle);
+            string stateName = enemy.Health.IsDead ? "Dead" : enemy.StateName;
+            GUI.Label(rect, $"<color={stateColor}>{stateName}</color>\nHP {enemy.Health.CurrentHealth}/{enemy.Health.MaxHealth}", labelStyle);
         }
     }
 }

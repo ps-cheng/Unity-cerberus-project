@@ -24,7 +24,8 @@ namespace Cerberus.Player
             damage = 10,
             knockbackForce = 3f,
             windupDistance = 0.15f,
-            thrustDistance = 0.6f
+            thrustDistance = 0.6f,
+            hitFeedback = new HitFeedbackData { hitStopDuration = 0.04f, shakeAmplitude = 0.06f, shakeDuration = 0.1f }
         };
 
         [SerializeField] private AttackData heavyAttack = new AttackData
@@ -38,7 +39,8 @@ namespace Cerberus.Player
             damage = 25,
             knockbackForce = 8f,
             windupDistance = 0.45f,
-            thrustDistance = 1.3f
+            thrustDistance = 1.3f,
+            hitFeedback = new HitFeedbackData { hitStopDuration = 0.09f, shakeAmplitude = 0.22f, shakeDuration = 0.22f }
         };
 
         [Header("Special")]
@@ -64,7 +66,8 @@ namespace Cerberus.Player
 
         public event Action<CombatAction> ActionStarted;
         public event Action<ActionPhase> PhaseChanged;
-        public event Action<Collider2D> TargetHit;
+        /// <summary>攻擊一般命中目標（不含被格檔、目標無敵）時觸發，附上是哪一招</summary>
+        public event Action<Collider2D, AttackData> TargetHit;
 
         private int attackFacing = 1;
         private float phaseTimer;
@@ -231,7 +234,7 @@ namespace Cerberus.Player
                 var info = new DamageInfo(CurrentAttack.damage, transform.position, CurrentAttack.knockbackForce);
 
                 if (damageable.TakeDamage(info) == DamageResult.Hit)
-                    TargetHit?.Invoke(target);
+                    TargetHit?.Invoke(target, CurrentAttack);
             }
         }
 

@@ -35,6 +35,9 @@ namespace Cerberus.Combat
         [Tooltip("判定時劍往前刺出的距離（純視覺）")]
         public float thrustDistance = 0.6f;
 
+        [Tooltip("命中時的 hit-stop 與鏡頭震動")]
+        public HitFeedbackData hitFeedback = new HitFeedbackData();
+
         public float TotalDuration => startupDuration + activeDuration + recoveryDuration;
     }
 }

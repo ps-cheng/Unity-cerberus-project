@@ -17,6 +17,10 @@ namespace Cerberus.Player
         [SerializeField] private float invincibilityDuration = 1f;
         [Tooltip("受傷後無法操作的時間")]
         [SerializeField] private float hitStunDuration = 0.3f;
+        [Tooltip("受傷擊退的水平速度 = 攻擊的 knockbackForce × 此倍率")]
+        [SerializeField] private float hurtKnockbackHorizontalScale = 0.54f;
+        [Tooltip("受傷擊退往上彈的速度 = 攻擊的 knockbackForce × 此倍率")]
+        [SerializeField] private float hurtKnockbackLiftScale = 0.42f;
 
         [Header("Guard / Parry")]
         [SerializeField] private float guardPushbackSpeed = 3f;
@@ -89,7 +93,8 @@ namespace Cerberus.Player
         private void ApplyHit(DamageInfo info)
         {
             combat.CancelAction();
-            movement.ApplyKnockback(new Vector2(GetAwayDirection(info), 0.6f) * info.knockbackForce, hitStunDuration);
+            Vector2 knockback = new Vector2(GetAwayDirection(info) * hurtKnockbackHorizontalScale, hurtKnockbackLiftScale) * info.knockbackForce;
+            movement.ApplyKnockback(knockback, hitStunDuration);
             invincibleUntil = blinkUntil = Time.time + invincibilityDuration;
             stunnedUntil = Time.time + hitStunDuration;
             health.ApplyDamage(info.amount);

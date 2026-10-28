@@ -62,9 +62,15 @@ namespace Cerberus.Combat
         {
             // 完美格檔就反彈；一般格檔、命中、或反彈後打中敵人都直接消失。玩家無敵時（Ignored）則穿過
             if (result == DamageResult.Parried && !IsReflected)
+            {
                 Reflect();
-            else
-                Destroy(gameObject);
+                return;
+            }
+
+            if (IsReflected && result == DamageResult.Hit)
+                CombatEvents.RaiseReflectedHit();
+
+            Destroy(gameObject);
         }
 
         private void Reflect()

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Cerberus.Enemies
 {
     /// <summary>
-    /// 所有敵人共用的部分：偵測玩家、受擊（扣血、閃白、短暫硬直）、死亡、面向翻轉。
+    /// 所有敵人共用的部分：偵測玩家、受擊（扣血、短暫硬直）、死亡（停留閃爍後刪除）、面向翻轉。
     /// 各種敵人只需要實作自己的行為（巡邏、追擊、射擊……）。
     /// </summary>
     [RequireComponent(typeof(Health), typeof(Rigidbody2D))]
@@ -18,10 +18,14 @@ namespace Cerberus.Enemies
 
         [Header("Hit Reaction")]
         [SerializeField] private float hurtStunDuration = 0.25f;
-        [SerializeField] private float hurtFlashDuration = 0.1f;
         [Tooltip("攻擊被完美格檔後的硬直，也就是玩家反擊的機會")]
         [SerializeField] private float parriedStaggerDuration = 1.2f;
         [SerializeField] private Color staggerColor = new Color(0.55f, 0.75f, 1f);
+
+        [Header("Death")]
+        [Tooltip("死亡後留在場上閃爍的時間，讓玩家看清楚最後一擊，之後才刪除")]
+        [SerializeField] private float deathLingerDuration = 0.45f;
+        [SerializeField] private float deathBlinkFrequency = 12f;
 
         [Header("Visual")]
         [SerializeField] private Transform visualRoot;
@@ -35,7 +39,9 @@ namespace Cerberus.Enemies
 
         protected Rigidbody2D Body { get; private set; }
         protected int FacingDirection { get; private set; } = 1;
-        protected bool IsStunned => Time.time < stunnedUntil;
+        // 死亡停留期間也視為硬直，子類別的行為邏輯會因此全部停下
+        protected bool IsStunned => IsDying || Time.time < stunnedUntil;
+        protected bool IsDying { get; private set; }
         protected bool IsStaggered => Time.time < staggeredUntil;
         protected Color BaseColor { get; private set; }
         protected LayerMask TargetLayers => targetLayers;
@@ -44,7 +50,7 @@ namespace Cerberus.Enemies
 
         private float stunnedUntil;
         private float staggeredUntil;
-        private float flashUntil;
+        private float diedAt;
 
         protected virtual void Awake()
         {
@@ -56,6 +62,12 @@ namespace Cerberus.Enemies
 
         protected virtual void Update()
         {
+            if (IsDying)
+            {
+                UpdateDeathBlink();
+                return;
+            }
+
             UpdateTarget();
             bodyRenderer.color = GetCurrentColor();
             visualRoot.localScale = new Vector3(FacingDirection * VisualScale.x, VisualScale.y, 1f);
@@ -67,7 +79,6 @@ namespace Cerberus.Enemies
                 return DamageResult.Ignored;
 
             Health.ApplyDamage(info.amount);
-            flashUntil = Time.time + hurtFlashDuration;
             // 取較長者：被格檔硬直中挨打，不會因此縮短硬直
             stunnedUntil = Mathf.Max(stunnedUntil, Time.time + hurtStunDuration);
             OnHurt(info);
@@ -81,23 +92,34 @@ namespace Cerberus.Enemies
         protected void ApplyParriedStagger()
         {
             stunnedUntil = staggeredUntil = Time.time + parriedStaggerDuration;
-            flashUntil = Time.time + hurtFlashDuration;
         }
 
-        private Color GetCurrentColor()
-        {
-            if (Time.time < flashUntil)
-                return Color.white;
-
-            return IsStaggered ? staggerColor : GetBodyColor();
-        }
+        private Color GetCurrentColor() => IsStaggered ? staggerColor : GetBodyColor();
 
         /// <summary>依目前狀態決定身體顏色，用來預告攻擊</summary>
         protected virtual Color GetBodyColor() => BaseColor;
 
+        /// <summary>死亡：立刻失去判定與行為，原地閃爍一下再刪除</summary>
         protected virtual void HandleDied()
         {
-            Destroy(gameObject);
+            IsDying = true;
+            diedAt = Time.time;
+            Body.linearVelocity = Vector2.zero;
+            Body.simulated = false;
+
+            foreach (Collider2D ownCollider in GetComponentsInChildren<Collider2D>())
+                ownCollider.enabled = false;
+
+            foreach (ContactDamageDealer dealer in GetComponentsInChildren<ContactDamageDealer>())
+                dealer.enabled = false;
+
+            Destroy(gameObject, deathLingerDuration);
+        }
+
+        private void UpdateDeathBlink()
+        {
+            bool isVisible = Mathf.Repeat((Time.time - diedAt) * deathBlinkFrequency, 1f) < 0.5f;
+            visualRoot.gameObject.SetActive(isVisible);
         }
 
         protected void SetFacing(float direction)

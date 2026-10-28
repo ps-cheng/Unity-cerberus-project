@@ -81,7 +81,7 @@ namespace Cerberus.Enemies
         private Vector2 aimDirection = Vector2.down;
         private bool hasHitThisBeam;
 
-        // 雷射畫面獨立於狀態計時，反射後狀態被打斷時光束仍會顯示完
+        // 雷射畫面獨立於狀態計時，反射後狀態被打斷或死亡停留時，光束仍會顯示完
         private float beamVisibleUntil;
         private Vector2 beamStart;
         private Vector2 beamEnd;
@@ -205,7 +205,8 @@ namespace Cerberus.Enemies
         {
             ShowBeam(parryPoint, firePoint.position, reflectedColor);
             int reflectedDamage = Mathf.RoundToInt(laserDamage * reflectedDamageMultiplier);
-            TakeDamage(new DamageInfo(reflectedDamage, parryPoint, laserKnockback));
+            if (TakeDamage(new DamageInfo(reflectedDamage, parryPoint, laserKnockback)) == DamageResult.Hit)
+                CombatEvents.RaiseReflectedHit();
         }
 
         private RaycastHit2D CastLaser()
@@ -234,19 +235,6 @@ namespace Cerberus.Enemies
             // 瞄準或充能中被打會中斷射擊
             if (state == State.Aim || state == State.Charge || state == State.Fire)
                 ChangeState(State.Recover);
-        }
-
-        protected override void HandleDied()
-        {
-            // 被反射的雷射擊殺時，讓光束留在場上播完再消失，否則玩家看不到反射
-            if (Time.time < beamVisibleUntil)
-            {
-                DrawLine(beamStart, beamEnd, beamDisplayColor, beamWidth);
-                laserLine.transform.SetParent(transform.parent, true);
-                Destroy(laserLine.gameObject, beamVisibleUntil - Time.time);
-            }
-
-            base.HandleDied();
         }
 
         protected override void Update()

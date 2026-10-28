@@ -46,6 +46,7 @@ namespace Cerberus.DebugTools
             damageReceiver.Parried += HandleParried;
             damageReceiver.Died += HandleDied;
             damageReceiver.Respawned += HandleRespawned;
+            CombatEvents.ReflectedHitLanded += HandleReflectedHit;
         }
 
         private void OnDisable()
@@ -58,16 +59,18 @@ namespace Cerberus.DebugTools
             damageReceiver.Parried -= HandleParried;
             damageReceiver.Died -= HandleDied;
             damageReceiver.Respawned -= HandleRespawned;
+            CombatEvents.ReflectedHitLanded -= HandleReflectedHit;
         }
 
         private void HandleJumped() => AddLog("Jump");
         private void HandleActionStarted(CombatAction action) => AddLog(GetActionName(action));
-        private void HandleTargetHit(Collider2D target) => AddLog($"Hit -> {target.name}");
+        private void HandleTargetHit(Collider2D target, AttackData attack) => AddLog($"Hit -> {target.name} ({attack.displayName})");
         private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
         private void HandleGuarded(int damageTaken) => AddLog($"<color=cyan>Guard -{damageTaken}</color>");
         private void HandleParried() => AddLog("<color=yellow><b>PARRY!</b></color>");
         private void HandleDied() => AddLog("<color=red>Died</color>");
         private void HandleRespawned() => AddLog("Respawn");
+        private void HandleReflectedHit() => AddLog("<color=cyan>Reflect Hit</color>");
 
         private void AddLog(string message)
         {
