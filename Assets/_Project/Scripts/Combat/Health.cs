@@ -14,7 +14,6 @@ namespace Cerberus.Combat
         public int CurrentHealth { get; private set; }
         public bool IsDead => CurrentHealth <= 0;
 
-        public event Action<int> Damaged;
         public event Action Died;
 
         private void Awake()
@@ -28,7 +27,6 @@ namespace Cerberus.Combat
                 return;
 
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
-            Damaged?.Invoke(amount);
 
             if (IsDead)
                 Died?.Invoke();

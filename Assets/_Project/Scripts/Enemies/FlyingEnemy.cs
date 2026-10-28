@@ -1,6 +1,5 @@
 using Cerberus.Combat;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Cerberus.Enemies
 {
@@ -54,7 +53,6 @@ namespace Cerberus.Enemies
         [SerializeField] private AttackTelegraph telegraph = new AttackTelegraph();
         [Tooltip("充能時身體膨脹的比例")]
         [SerializeField] private Vector2 chargeSwellScale = new Vector2(1.35f, 1.35f);
-        [FormerlySerializedAs("aimLine")]
         [SerializeField] private LineRenderer laserLine;
         [SerializeField] private Color aimColor = new Color(1f, 0.15f, 0.2f);
         [SerializeField] private float aimWidth = 0.03f;
@@ -62,16 +60,8 @@ namespace Cerberus.Enemies
         [SerializeField] private float beamWidth = 0.3f;
         [SerializeField] private Color beamColor = new Color(1f, 0.35f, 0.4f);
 
-        public override string StateName
-        {
-            get
-            {
-                if (IsStunned)
-                    return IsStaggered ? "Staggered" : "Hurt";
-
-                return state == State.Charge ? $"Charge {stateTimer / chargeDuration:P0}" : state.ToString();
-            }
-        }
+        protected override string BehaviorStateName =>
+            state == State.Charge ? $"Charge {stateTimer / chargeDuration:P0}" : state.ToString();
 
         private State state = State.Patrol;
         private float stateTimer;

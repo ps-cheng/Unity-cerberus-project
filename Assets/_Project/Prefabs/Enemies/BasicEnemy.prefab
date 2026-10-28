@@ -767,7 +767,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   hurtStunDuration: 0.4
-  hurtFlashDuration: 0.1
+  parriedStaggerDuration: 1.2
+  staggerColor: {r: 0.55, g: 0.75, b: 1, a: 1}
+  deathLingerDuration: 0.45
+  deathBlinkFrequency: 12
   visualRoot: {fileID: 8170315328773181273}
   bodyRenderer: {fileID: 4451435600204535868}
   moveSpeed: 5.5
@@ -785,9 +788,16 @@ MonoBehaviour:
     knockbackForce: 8
     windupDistance: 0.2
     thrustDistance: 0.6
-  telegraphColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  telegraphBlinkStartFrequency: 4
-  telegraphBlinkEndFrequency: 14
+    hitFeedback:
+      hitStopDuration: 0.04
+      shakeAmplitude: 0.06
+      shakeDuration: 0.12
+  telegraph:
+    warningColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+    blinkStartFrequency: 4
+    blinkEndFrequency: 14
+    cueDuration: 0.25
+    cueColor: {r: 1, g: 1, b: 1, a: 1}
   windupSquashScale: {x: 1.15, y: 0.8}
   attackStretchScale: {x: 1.3, y: 0.9}
   attackColor: {r: 1, g: 0.3, b: 0.2, a: 1}

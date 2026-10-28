@@ -1,6 +1,5 @@
 using Cerberus.Combat;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Cerberus.DebugTools
 {
@@ -13,7 +12,6 @@ namespace Cerberus.DebugTools
     public class CombatZoneVisualizer : MonoBehaviour
     {
         [Tooltip("需實作 ICombatZoneSource（例如 PlayerCombat、BasicEnemy）")]
-        [FormerlySerializedAs("combat")]
         [SerializeField] private MonoBehaviour zoneSource;
         [SerializeField, Range(0f, 1f)] private float alpha = 0.35f;
 

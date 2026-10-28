@@ -21,14 +21,15 @@ namespace Cerberus.Combat
     }
 
     /// <summary>
-    /// 一次攻擊的結果，攻擊方可以據此做出反應（例如被格檔時彈開）。
+    /// 一次攻擊的結果，攻擊方可以據此做出反應（例如被完美格檔時陷入硬直、反射雷射）。
     /// </summary>
     public enum DamageResult
     {
+        // 目標無敵或已死亡，這一下不算數
         Ignored,
         // 被擋下但仍有部分傷害（一般格檔）
         Blocked,
-        // 完全化解，攻擊方會陷入硬直（完美格檔）
+        // 完全化解（完美格檔）
         Parried,
         Hit
     }

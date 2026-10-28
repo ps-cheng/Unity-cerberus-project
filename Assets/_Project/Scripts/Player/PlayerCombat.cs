@@ -57,6 +57,12 @@ namespace Cerberus.Player
         public bool IsAttacking => CurrentAction == CombatAction.LightAttack || CurrentAction == CombatAction.HeavyAttack;
         public bool IsSpecialActive => CurrentAction == CombatAction.Special;
         public string SpecialName => specialAbility.DisplayName;
+        public string CurrentActionName => CurrentAction switch
+        {
+            CombatAction.None => "-",
+            CombatAction.Special => SpecialName,
+            _ => CurrentAttack.displayName
+        };
         public bool SpecialLocksMovement => specialAbility.LocksMovement;
         public bool SpecialAllowsTurning => specialAbility.AllowsTurning;
         public string SpecialStatusText => specialAbility.StatusText;
@@ -65,7 +71,6 @@ namespace Cerberus.Player
         public float PhaseProgress { get; private set; }
 
         public event Action<CombatAction> ActionStarted;
-        public event Action<ActionPhase> PhaseChanged;
         /// <summary>攻擊一般命中目標（不含被格檔、目標無敵）時觸發，附上是哪一招</summary>
         public event Action<Collider2D, AttackData> TargetHit;
 
@@ -194,7 +199,6 @@ namespace Cerberus.Player
             CurrentPhase = phase;
             phaseTimer = 0f;
             PhaseProgress = 0f;
-            PhaseChanged?.Invoke(phase);
         }
 
         private void EndAction()

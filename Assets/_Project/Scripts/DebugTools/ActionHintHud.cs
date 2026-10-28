@@ -63,7 +63,7 @@ namespace Cerberus.DebugTools
         }
 
         private void HandleJumped() => AddLog("Jump");
-        private void HandleActionStarted(CombatAction action) => AddLog(GetActionName(action));
+        private void HandleActionStarted(CombatAction action) => AddLog(GetCurrentActionText());
         private void HandleTargetHit(Collider2D target, AttackData attack) => AddLog($"Hit -> {target.name} ({attack.displayName})");
         private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
         private void HandleGuarded(int damageTaken) => AddLog($"<color=cyan>Guard -{damageTaken}</color>");
@@ -116,7 +116,7 @@ namespace Cerberus.DebugTools
             GUILayout.Space(6);
             GUILayout.Label($"<b>HP</b>     {playerHealth.CurrentHealth} / {playerHealth.MaxHealth}{GetStatusTags()}", labelStyle);
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);
-            GUILayout.Label($"<b>Action</b> {GetActionName(combat.CurrentAction)}  {GetPhaseText()}", labelStyle);
+            GUILayout.Label($"<b>Action</b> {GetCurrentActionText()}  {GetPhaseText()}", labelStyle);
             GUILayout.EndArea();
         }
 
@@ -161,7 +161,7 @@ namespace Cerberus.DebugTools
             Vector3 screenPoint = mainCamera.WorldToScreenPoint(movement.transform.position + labelWorldOffset);
             // IMGUI 的 y 軸由上往下，需反轉
             Rect rect = new Rect(screenPoint.x - 150, Screen.height - screenPoint.y - 25, 300, 50);
-            GUI.Label(rect, $"{GetActionName(combat.CurrentAction)}\n<size=13>{GetPhaseText()}</size>", floatingLabelStyle);
+            GUI.Label(rect, $"{GetCurrentActionText()}\n<size=13>{GetPhaseText()}</size>", floatingLabelStyle);
         }
 
         private string GetPhaseText()
@@ -179,18 +179,13 @@ namespace Cerberus.DebugTools
             return $"[{phaseName} {combat.PhaseProgress:P0}]";
         }
 
-        private string GetSpecialStatus()
+        private string GetCurrentActionText()
         {
-            string status = combat.SpecialStatusText;
-            return string.IsNullOrEmpty(status) ? string.Empty : $" ({status})";
-        }
+            if (!combat.IsSpecialActive)
+                return combat.CurrentActionName;
 
-        private string GetActionName(CombatAction action) => action switch
-        {
-            CombatAction.LightAttack => "Light Thrust",
-            CombatAction.HeavyAttack => "Heavy Thrust",
-            CombatAction.Special => $"Special: {combat.SpecialName}{GetSpecialStatus()}",
-            _ => "-"
-        };
+            string status = combat.SpecialStatusText;
+            return string.IsNullOrEmpty(status) ? $"Special: {combat.SpecialName}" : $"Special: {combat.SpecialName} ({status})";
+        }
     }
 }

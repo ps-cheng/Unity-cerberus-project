@@ -4,7 +4,7 @@ namespace Cerberus.Combat
 {
     /// <summary>
     /// 跨物件的戰鬥事件。用在「發生的地方」跟「玩家」沒有直接關聯的情況，
-    /// 例如反射的雷射或子彈是由敵人、子彈自己結算，但命中回饋要算在玩家身上。
+    /// 例如反射的雷射是由發射的敵人自己結算傷害，但命中回饋要算在玩家身上。
     /// </summary>
     public static class CombatEvents
     {

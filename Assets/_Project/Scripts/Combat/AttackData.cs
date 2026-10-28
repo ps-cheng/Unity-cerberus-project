@@ -37,7 +37,5 @@ namespace Cerberus.Combat
 
         [Tooltip("命中時的 hit-stop 與鏡頭震動")]
         public HitFeedbackData hitFeedback = new HitFeedbackData();
-
-        public float TotalDuration => startupDuration + activeDuration + recoveryDuration;
     }
 }

@@ -347,7 +347,6 @@ GameObject:
   - component: {fileID: 2833452092441939589}
   - component: {fileID: 3279666042197617834}
   - component: {fileID: 2842404970858594511}
-  - component: {fileID: 6039405133651172564}
   - component: {fileID: 4050967491602579465}
   - component: {fileID: 3176989109366916073}
   m_Layer: 10
@@ -452,23 +451,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.Health
   maxHealth: 20
---- !u!114 &6039405133651172564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2728538916931162735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbfaa5f004a475e4092685c67801ef78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.ContactDamageDealer
-  damage: 10
-  knockbackForce: 8
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &4050967491602579465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,9 +469,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   hurtStunDuration: 0.25
-  hurtFlashDuration: 0.1
   parriedStaggerDuration: 1.2
   staggerColor: {r: 0.55, g: 0.75, b: 1, a: 1}
+  deathLingerDuration: 0.45
+  deathBlinkFrequency: 12
   visualRoot: {fileID: 5971779224764007150}
   bodyRenderer: {fileID: 6165138154806091315}
   patrolDistance: 2.5

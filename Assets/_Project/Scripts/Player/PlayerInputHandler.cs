@@ -14,6 +14,7 @@ namespace Cerberus.Player
         private InputAction lightAttackAction;
         private InputAction heavyAttackAction;
         private InputAction specialAction;
+        private InputAction[] allActions;
 
         public float MoveInput => moveAction.ReadValue<float>();
         public bool JumpPressed => jumpAction.WasPressedThisFrame();
@@ -57,33 +58,26 @@ namespace Cerberus.Player
             specialAction.AddBinding("<Keyboard>/l");
             specialAction.AddBinding("<Keyboard>/c");
             specialAction.AddBinding("<Gamepad>/leftShoulder");
+
+            allActions = new[] { moveAction, jumpAction, lightAttackAction, heavyAttackAction, specialAction };
         }
 
         private void OnEnable()
         {
-            moveAction.Enable();
-            jumpAction.Enable();
-            lightAttackAction.Enable();
-            heavyAttackAction.Enable();
-            specialAction.Enable();
+            foreach (InputAction action in allActions)
+                action.Enable();
         }
 
         private void OnDisable()
         {
-            moveAction.Disable();
-            jumpAction.Disable();
-            lightAttackAction.Disable();
-            heavyAttackAction.Disable();
-            specialAction.Disable();
+            foreach (InputAction action in allActions)
+                action.Disable();
         }
 
         private void OnDestroy()
         {
-            moveAction.Dispose();
-            jumpAction.Dispose();
-            lightAttackAction.Dispose();
-            heavyAttackAction.Dispose();
-            specialAction.Dispose();
+            foreach (InputAction action in allActions)
+                action.Dispose();
         }
     }
 }

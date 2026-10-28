@@ -181,37 +181,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9108999348035279804, guid: 3c59731d12fe009459d4873116aa96ad, type: 3}
   m_PrefabInstance: {fileID: 43436734}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &124777937
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 124777938}
-  m_Layer: 0
-  m_Name: Projectiles
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &124777938
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 124777937}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &211942627
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,7 +841,7 @@ MonoBehaviour:
   specialAbility: {fileID: 525042488}
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 3072
+    m_Bits: 1024
 --- !u!114 &525042482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1775,10 +1744,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4050967491602579465, guid: 53b102468bf516043bd2daaf1650b5ee, type: 3}
-      propertyPath: projectileParent
-      value: 
-      objectReference: {fileID: 124777938}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3180,4 +3145,3 @@ SceneRoots:
   - {fileID: 1879495117}
   - {fileID: 238956328}
   - {fileID: 465765399}
-  - {fileID: 124777938}

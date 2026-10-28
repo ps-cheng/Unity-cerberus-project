@@ -35,7 +35,23 @@ namespace Cerberus.Enemies
         public bool HasTarget => Target != null;
         public float DetectionRadius => detectionRadius;
         public Health Health { get; private set; }
-        public abstract string StateName { get; }
+
+        /// <summary>給除錯標籤顯示；死亡、硬直這些共通狀態優先於子類別自己的行為狀態</summary>
+        public string StateName
+        {
+            get
+            {
+                if (IsDying)
+                    return "Dead";
+
+                if (IsStaggered)
+                    return "Staggered";
+
+                return IsStunned ? "Hurt" : BehaviorStateName;
+            }
+        }
+
+        protected abstract string BehaviorStateName { get; }
 
         protected Rigidbody2D Body { get; private set; }
         protected int FacingDirection { get; private set; } = 1;
@@ -100,7 +116,7 @@ namespace Cerberus.Enemies
         protected virtual Color GetBodyColor() => BaseColor;
 
         /// <summary>死亡：立刻失去判定與行為，原地閃爍一下再刪除</summary>
-        protected virtual void HandleDied()
+        private void HandleDied()
         {
             IsDying = true;
             diedAt = Time.time;

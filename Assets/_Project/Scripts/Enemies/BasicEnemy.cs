@@ -58,19 +58,8 @@ namespace Cerberus.Enemies
 
         public bool IsSpecialActive => false;
 
-        public override string StateName
-        {
-            get
-            {
-                if (IsStaggered)
-                    return "Staggered";
-
-                if (IsStunned)
-                    return "Hurt";
-
-                return state == State.Windup ? $"Windup {PhaseProgress:P0}" : state.ToString();
-            }
-        }
+        protected override string BehaviorStateName =>
+            state == State.Windup ? $"Windup {PhaseProgress:P0}" : state.ToString();
 
         private State state = State.Idle;
         private float stateTimer;

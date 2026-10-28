@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Cerberus.DebugTools
 {
     /// <summary>
-    /// 畫出敵人的活動範圍（地面巡邏線、空中飛行軌跡）。
+    /// 畫出敵人的活動範圍（例如飛行敵人來回橫移的兩個端點）。
     /// 範圍以世界座標固定，不會跟著敵人移動；物件仍放在敵人底下，敵人死亡時一起消失。
     /// </summary>
     [RequireComponent(typeof(LineRenderer))]
