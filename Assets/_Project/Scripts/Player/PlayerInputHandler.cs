@@ -1,83 +1,36 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Cerberus.Player
 {
     /// <summary>
-    /// 集中管理玩家輸入。其他元件只讀取這裡公開的狀態，不直接碰 Input System，
-    /// 之後要改鍵位或加入三頭犬切換鍵時只需要改這支。
+    /// 集中管理玩家輸入。其他元件只讀取這裡公開的狀態，不直接碰 Input System。
+    /// 鍵位設定在 Assets/_Project/Input/CerberusControls.inputactions（雙擊開啟編輯器），
+    /// CerberusControls 類別是 Unity 依該資產自動產生的，不要手動修改。
     /// </summary>
     public class PlayerInputHandler : MonoBehaviour
     {
-        private InputAction moveAction;
-        private InputAction jumpAction;
-        private InputAction lightAttackAction;
-        private InputAction heavyAttackAction;
-        private InputAction specialAction;
-        private InputAction[] allActions;
+        private CerberusControls controls;
+        private CerberusControls.GameplayActions gameplay;
 
-        public float MoveInput => moveAction.ReadValue<float>();
-        public bool JumpPressed => jumpAction.WasPressedThisFrame();
-        public bool JumpHeld => jumpAction.IsPressed();
-        public bool LightAttackPressed => lightAttackAction.WasPressedThisFrame();
-        public bool HeavyAttackPressed => heavyAttackAction.WasPressedThisFrame();
-        public bool SpecialPressed => specialAction.WasPressedThisFrame();
-        public bool SpecialHeld => specialAction.IsPressed();
+        public float MoveInput => gameplay.Move.ReadValue<float>();
+        public bool JumpPressed => gameplay.Jump.WasPressedThisFrame();
+        public bool JumpHeld => gameplay.Jump.IsPressed();
+        public bool LightAttackPressed => gameplay.LightAttack.WasPressedThisFrame();
+        public bool HeavyAttackPressed => gameplay.HeavyAttack.WasPressedThisFrame();
+        // 特殊動作依角色而不同（第一顆頭是格檔），所以只叫 Special
+        public bool SpecialPressed => gameplay.Special.WasPressedThisFrame();
+        public bool SpecialHeld => gameplay.Special.IsPressed();
 
         private void Awake()
         {
-            // 用程式碼建立 Action，鍵位一目了然，也不依賴 .inputactions 資產
-            moveAction = new InputAction("Move", InputActionType.Value, expectedControlType: "Axis");
-            moveAction.AddCompositeBinding("1DAxis")
-                .With("Negative", "<Keyboard>/a")
-                .With("Positive", "<Keyboard>/d");
-            moveAction.AddCompositeBinding("1DAxis")
-                .With("Negative", "<Keyboard>/leftArrow")
-                .With("Positive", "<Keyboard>/rightArrow");
-            moveAction.AddBinding("<Gamepad>/leftStick/x");
-            moveAction.AddBinding("<Gamepad>/dpad/x");
-
-            jumpAction = new InputAction("Jump", InputActionType.Button);
-            jumpAction.AddBinding("<Keyboard>/space");
-            jumpAction.AddBinding("<Gamepad>/buttonSouth");
-
-            lightAttackAction = new InputAction("LightAttack", InputActionType.Button);
-            lightAttackAction.AddBinding("<Keyboard>/j");
-            lightAttackAction.AddBinding("<Keyboard>/z");
-            lightAttackAction.AddBinding("<Mouse>/leftButton");
-            lightAttackAction.AddBinding("<Gamepad>/buttonWest");
-
-            heavyAttackAction = new InputAction("HeavyAttack", InputActionType.Button);
-            heavyAttackAction.AddBinding("<Keyboard>/k");
-            heavyAttackAction.AddBinding("<Keyboard>/x");
-            heavyAttackAction.AddBinding("<Mouse>/rightButton");
-            heavyAttackAction.AddBinding("<Gamepad>/buttonNorth");
-
-            // 特殊動作依角色而不同（第一顆頭是格檔），所以只叫 Special
-            specialAction = new InputAction("Special", InputActionType.Button);
-            specialAction.AddBinding("<Keyboard>/l");
-            specialAction.AddBinding("<Keyboard>/c");
-            specialAction.AddBinding("<Gamepad>/leftShoulder");
-
-            allActions = new[] { moveAction, jumpAction, lightAttackAction, heavyAttackAction, specialAction };
+            controls = new CerberusControls();
+            gameplay = controls.Gameplay;
         }
 
-        private void OnEnable()
-        {
-            foreach (InputAction action in allActions)
-                action.Enable();
-        }
+        private void OnEnable() => gameplay.Enable();
 
-        private void OnDisable()
-        {
-            foreach (InputAction action in allActions)
-                action.Disable();
-        }
+        private void OnDisable() => gameplay.Disable();
 
-        private void OnDestroy()
-        {
-            foreach (InputAction action in allActions)
-                action.Dispose();
-        }
+        private void OnDestroy() => controls.Dispose();
     }
 }

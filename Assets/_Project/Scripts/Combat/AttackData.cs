@@ -1,13 +1,14 @@
-using System;
 using UnityEngine;
 
 namespace Cerberus.Combat
 {
     /// <summary>
-    /// 一招攻擊的數值設定。可在 Inspector 直接調整手感。
+    /// 一招攻擊的數值設定，存成獨立的 .asset 檔（Assets/_Project/Data/Attacks）。
+    /// 所有參照同一個檔案的角色共用這份數值；Play Mode 中調整的數值停止後會保留。
+    /// 執行時只讀不寫，每個角色各自變動的狀態（血量、目前階段）不要放在這裡。
     /// </summary>
-    [Serializable]
-    public class AttackData
+    [CreateAssetMenu(fileName = "NewAttack", menuName = "Cerberus/Attack Data")]
+    public class AttackData : ScriptableObject
     {
         public string displayName = "Attack";
 

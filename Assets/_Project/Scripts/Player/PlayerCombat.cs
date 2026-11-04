@@ -13,35 +13,8 @@ namespace Cerberus.Player
     public class PlayerCombat : MonoBehaviour, ICombatZoneSource
     {
         [Header("Attacks")]
-        [SerializeField] private AttackData lightAttack = new AttackData
-        {
-            displayName = "Light Thrust",
-            startupDuration = 0.06f,
-            activeDuration = 0.1f,
-            recoveryDuration = 0.14f,
-            hitboxOffset = new Vector2(1.15f, 0.35f),
-            hitboxSize = new Vector2(1.5f, 0.4f),
-            damage = 10,
-            knockbackForce = 3f,
-            windupDistance = 0.15f,
-            thrustDistance = 0.6f,
-            hitFeedback = new HitFeedbackData { hitStopDuration = 0.04f, shakeAmplitude = 0.06f, shakeDuration = 0.1f }
-        };
-
-        [SerializeField] private AttackData heavyAttack = new AttackData
-        {
-            displayName = "Heavy Thrust",
-            startupDuration = 0.28f,
-            activeDuration = 0.16f,
-            recoveryDuration = 0.5f,
-            hitboxOffset = new Vector2(1.65f, 0.35f),
-            hitboxSize = new Vector2(2.5f, 0.8f),
-            damage = 25,
-            knockbackForce = 8f,
-            windupDistance = 0.45f,
-            thrustDistance = 1.3f,
-            hitFeedback = new HitFeedbackData { hitStopDuration = 0.09f, shakeAmplitude = 0.22f, shakeDuration = 0.22f }
-        };
+        [SerializeField] private AttackData lightAttack;
+        [SerializeField] private AttackData heavyAttack;
 
         [Header("Special")]
         [Tooltip("這顆頭的特殊動作，切換角色時會換成不同的實作")]
@@ -245,7 +218,7 @@ namespace Cerberus.Player
         private void OnDrawGizmosSelected()
         {
             // 未執行時在 Scene 視窗預覽兩種攻擊的範圍（以面向右為準）
-            if (Application.isPlaying)
+            if (Application.isPlaying || lightAttack == null || heavyAttack == null)
                 return;
 
             Vector2 origin = transform.position;

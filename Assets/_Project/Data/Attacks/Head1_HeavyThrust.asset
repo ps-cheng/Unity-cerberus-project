@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bac4d04c09a58f34f84fb8f038aba205, type: 3}
+  m_Name: Head1_HeavyThrust
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.AttackData
+  displayName: Heavy Thrust
+  startupDuration: 0.28
+  activeDuration: 0.16
+  recoveryDuration: 0.5
+  hitboxOffset: {x: 1.65, y: 0.35}
+  hitboxSize: {x: 2.5, y: 0.8}
+  damage: 25
+  knockbackForce: 8
+  windupDistance: 0.45
+  thrustDistance: 1.3
+  hitFeedback:
+    hitStopDuration: 0.09
+    shakeAmplitude: 0.22
+    shakeDuration: 0.22

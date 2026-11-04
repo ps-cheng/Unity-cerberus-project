@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bac4d04c09a58f34f84fb8f038aba205, type: 3}
+  m_Name: Head1_LightThrust
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.AttackData
+  displayName: Light Thrust
+  startupDuration: 0.06
+  activeDuration: 0.1
+  recoveryDuration: 0.14
+  hitboxOffset: {x: 1.15, y: 0.35}
+  hitboxSize: {x: 1.5, y: 0.4}
+  damage: 10
+  knockbackForce: 3
+  windupDistance: 0.15
+  thrustDistance: 0.6
+  hitFeedback:
+    hitStopDuration: 0.04
+    shakeAmplitude: 0.06
+    shakeDuration: 0.1

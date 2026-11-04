@@ -808,36 +808,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39745208d00dddf4d8f7df16de3d9984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.PlayerCombat
-  lightAttack:
-    displayName: Light Thrust
-    startupDuration: 0.06
-    activeDuration: 0.1
-    recoveryDuration: 0.14
-    hitboxOffset: {x: 1.15, y: 0.35}
-    hitboxSize: {x: 1.5, y: 0.4}
-    damage: 10
-    knockbackForce: 3
-    windupDistance: 0.15
-    thrustDistance: 0.6
-    hitFeedback:
-      hitStopDuration: 0.04
-      shakeAmplitude: 0.06
-      shakeDuration: 0.1
-  heavyAttack:
-    displayName: Heavy Thrust
-    startupDuration: 0.28
-    activeDuration: 0.16
-    recoveryDuration: 0.5
-    hitboxOffset: {x: 1.65, y: 0.35}
-    hitboxSize: {x: 2.5, y: 0.8}
-    damage: 25
-    knockbackForce: 8
-    windupDistance: 0.45
-    thrustDistance: 1.3
-    hitFeedback:
-      hitStopDuration: 0.09
-      shakeAmplitude: 0.22
-      shakeDuration: 0.22
+  lightAttack: {fileID: 11400000, guid: 34b9fd96f3bb3724398cfdcd4640e507, type: 2}
+  heavyAttack: {fileID: 11400000, guid: 65c8611817a9df84f90d1ca9659bad3e, type: 2}
   specialAbility: {fileID: 525042488}
   hittableLayers:
     serializedVersion: 2

@@ -29,17 +29,7 @@ namespace Cerberus.Enemies
         [SerializeField] private float attackTriggerDistance = 1.6f;
         [Tooltip("高度差超過此值不出招，例如玩家站在頭頂的平台上")]
         [SerializeField] private float attackMaxHeightDifference = 1.5f;
-        [SerializeField] private AttackData attack = new AttackData
-        {
-            displayName = "Swipe",
-            startupDuration = 0.65f,
-            activeDuration = 0.15f,
-            recoveryDuration = 0.6f,
-            hitboxOffset = new Vector2(1f, 0f),
-            hitboxSize = new Vector2(1.4f, 1.2f),
-            damage = 15,
-            knockbackForce = 8f
-        };
+        [SerializeField] private AttackData attack;
 
         [Header("Windup Telegraph")]
         [SerializeField] private AttackTelegraph telegraph = new AttackTelegraph();
@@ -272,7 +262,7 @@ namespace Cerberus.Enemies
         {
             base.OnDrawGizmosSelected();
 
-            if (Application.isPlaying)
+            if (Application.isPlaying || attack == null)
                 return;
 
             // 未執行時預覽攻擊距離與攻擊範圍（以面向右為準）

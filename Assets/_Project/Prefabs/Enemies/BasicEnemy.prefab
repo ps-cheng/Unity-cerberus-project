@@ -777,21 +777,7 @@ MonoBehaviour:
   acceleration: 40
   attackTriggerDistance: 1.6
   attackMaxHeightDifference: 1.5
-  attack:
-    displayName: Swipe
-    startupDuration: 0.65
-    activeDuration: 0.15
-    recoveryDuration: 0.6
-    hitboxOffset: {x: 1, y: 0}
-    hitboxSize: {x: 1.4, y: 1.2}
-    damage: 15
-    knockbackForce: 8
-    windupDistance: 0.2
-    thrustDistance: 0.6
-    hitFeedback:
-      hitStopDuration: 0.04
-      shakeAmplitude: 0.06
-      shakeDuration: 0.12
+  attack: {fileID: 11400000, guid: a279d6ac21ac0414dac6353e5b300242, type: 2}
   telegraph:
     warningColor: {r: 1, g: 0.85, b: 0.2, a: 1}
     blinkStartFrequency: 4
