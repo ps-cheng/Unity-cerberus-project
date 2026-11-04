@@ -770,7 +770,6 @@ GameObject:
   - component: {fileID: 525042482}
   - component: {fileID: 525042490}
   - component: {fileID: 525042489}
-  - component: {fileID: 525042488}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -808,9 +807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39745208d00dddf4d8f7df16de3d9984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.PlayerCombat
-  lightAttack: {fileID: 11400000, guid: 34b9fd96f3bb3724398cfdcd4640e507, type: 2}
-  heavyAttack: {fileID: 11400000, guid: 65c8611817a9df84f90d1ca9659bad3e, type: 2}
-  specialAbility: {fileID: 525042488}
+  head: {fileID: 11400000, guid: 9248232d8b2c9024c88b33e86faab750, type: 2}
   hittableLayers:
     serializedVersion: 2
     m_Bits: 1024
@@ -965,23 +962,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &525042488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 525042479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4de9d49bfb691946be14e1f5638ba45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.ShieldBlockSpecial
-  zoneOffset: {x: 0.6, y: 0.2}
-  zoneSize: {x: 0.4, y: 1.6}
-  guardDamageReduction: 0.7
-  parryWindow: 0.133
-  whiffLockoutDuration: 0.5
 --- !u!114 &525042489
 MonoBehaviour:
   m_ObjectHideFlags: 0

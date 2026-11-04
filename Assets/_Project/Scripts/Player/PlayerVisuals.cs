@@ -53,7 +53,6 @@ namespace Cerberus.Player
         private Vector2 swordRestPosition;
         private SpriteRenderer[] visualRenderers;
         private SpriteRenderer shieldRenderer;
-        private ShieldBlockSpecial shieldBlock;
         private Color shieldBaseColor;
         private Color shieldFlashColor;
         private float shieldFlashStartTime = float.NegativeInfinity;
@@ -66,7 +65,6 @@ namespace Cerberus.Player
             visualRenderers = visualRoot.GetComponentsInChildren<SpriteRenderer>();
             shieldRenderer = shieldPivot.GetComponentInChildren<SpriteRenderer>();
             shieldBaseColor = shieldRenderer.color;
-            shieldBlock = GetComponent<ShieldBlockSpecial>();
         }
 
         private void OnEnable()
@@ -154,7 +152,8 @@ namespace Cerberus.Player
 
         private Color GetShieldColor()
         {
-            if (shieldBlock == null)
+            // 只有格檔才有完美格檔的盾牌提示，其他頭的特殊動作維持原色
+            if (!(combat.Special is ShieldBlockSpecial shieldBlock))
                 return shieldBaseColor;
 
             if (shieldBlock.IsParryWindowActive)

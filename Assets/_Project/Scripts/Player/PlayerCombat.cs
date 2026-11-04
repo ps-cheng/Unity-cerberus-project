@@ -12,17 +12,15 @@ namespace Cerberus.Player
     /// </summary>
     public class PlayerCombat : MonoBehaviour, ICombatZoneSource
     {
-        [Header("Attacks")]
-        [SerializeField] private AttackData lightAttack;
-        [SerializeField] private AttackData heavyAttack;
-
-        [Header("Special")]
-        [Tooltip("這顆頭的特殊動作，切換角色時會換成不同的實作")]
-        [SerializeField] private SpecialAbility specialAbility;
+        [Header("Head")]
+        [Tooltip("目前這顆頭的招式組合（弱攻擊、強攻擊、特殊動作）")]
+        [SerializeField] private HeadConfig head;
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hittableLayers;
 
+        public HeadConfig Head => head;
+        public SpecialAbility Special => specialAbility;
         public CombatAction CurrentAction { get; private set; }
         public ActionPhase CurrentPhase { get; private set; }
         public AttackData CurrentAttack { get; private set; }
@@ -47,6 +45,7 @@ namespace Cerberus.Player
         /// <summary>攻擊一般命中目標（不含被格檔、目標無敵）時觸發，附上是哪一招</summary>
         public event Action<Collider2D, AttackData> TargetHit;
 
+        private SpecialAbility specialAbility;
         private int attackFacing = 1;
         private float phaseTimer;
         private ContactFilter2D hitFilter;
@@ -59,6 +58,8 @@ namespace Cerberus.Player
             hitFilter = new ContactFilter2D();
             hitFilter.SetLayerMask(hittableLayers);
             hitFilter.useTriggers = true;
+
+            specialAbility = head.special.CreateAbility(transform);
         }
 
         public bool TryStartAttack(CombatAction attackType, int facing)
@@ -68,8 +69,8 @@ namespace Cerberus.Player
 
             CurrentAttack = attackType switch
             {
-                CombatAction.LightAttack => lightAttack,
-                CombatAction.HeavyAttack => heavyAttack,
+                CombatAction.LightAttack => head.lightAttack,
+                CombatAction.HeavyAttack => head.heavyAttack,
                 _ => null
             };
 
@@ -217,15 +218,26 @@ namespace Cerberus.Player
 
         private void OnDrawGizmosSelected()
         {
-            // 未執行時在 Scene 視窗預覽兩種攻擊的範圍（以面向右為準）
-            if (Application.isPlaying || lightAttack == null || heavyAttack == null)
+            // 未執行時在 Scene 視窗預覽這顆頭的招式範圍（以面向右為準）
+            if (Application.isPlaying || head == null)
                 return;
 
             Vector2 origin = transform.position;
-            Gizmos.color = new Color(1f, 0.6f, 0f);
-            Gizmos.DrawWireCube(origin + lightAttack.hitboxOffset, lightAttack.hitboxSize);
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(origin + heavyAttack.hitboxOffset, heavyAttack.hitboxSize);
+
+            if (head.lightAttack != null)
+            {
+                Gizmos.color = new Color(1f, 0.6f, 0f);
+                Gizmos.DrawWireCube(origin + head.lightAttack.hitboxOffset, head.lightAttack.hitboxSize);
+            }
+
+            if (head.heavyAttack != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(origin + head.heavyAttack.hitboxOffset, head.heavyAttack.hitboxSize);
+            }
+
+            if (head.special != null)
+                head.special.DrawGizmos(origin);
         }
     }
 }

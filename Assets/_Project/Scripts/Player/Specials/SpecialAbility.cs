@@ -6,9 +6,17 @@ namespace Cerberus.Player
     /// <summary>
     /// 特殊動作的共同基底。三頭犬的每顆頭各有一種特殊動作（格檔、衝刺……），
     /// PlayerCombat 只透過這個類別操作，不需要知道具體是哪一種。
+    /// 不是元件：由對應的 SpecialAbilityData 資產產生，數值讀資產，計時等狀態存在這個物件上。
     /// </summary>
-    public abstract class SpecialAbility : MonoBehaviour
+    public abstract class SpecialAbility
     {
+        protected readonly Transform owner;
+
+        protected SpecialAbility(Transform owner)
+        {
+            this.owner = owner;
+        }
+
         public abstract string DisplayName { get; }
         public bool IsActive { get; protected set; }
         public virtual bool LocksMovement => true;
