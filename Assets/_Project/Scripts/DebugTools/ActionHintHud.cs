@@ -21,8 +21,9 @@ namespace Cerberus.DebugTools
         [SerializeField] private PlayerCombat combat;
         [SerializeField] private PlayerDamageReceiver damageReceiver;
         [SerializeField] private Health playerHealth;
-        [Tooltip("左上角留給換頭轉盤，狀態面板放在它下面")]
-        [SerializeField] private Rect statusPanelRect = new Rect(10f, 110f, 460f, 320f);
+        [Tooltip("左上角留給換頭轉盤，狀態面板放在它下面；高度依內容自動調整")]
+        [SerializeField] private Vector2 statusPanelPosition = new Vector2(10f, 110f);
+        [SerializeField] private float statusPanelWidth = 470f;
         [SerializeField] private Vector3 labelWorldOffset = new Vector3(0f, 1.6f, 0f);
         [SerializeField] private int maxLogEntries = 8;
         [SerializeField] private float logLifetime = 2.5f;
@@ -44,6 +45,7 @@ namespace Cerberus.DebugTools
             combat.ActionStarted += HandleActionStarted;
             combat.TargetHit += HandleTargetHit;
             combat.HeadChanged += HandleHeadChanged;
+            combat.SpecialToggled += HandleSpecialToggled;
             damageReceiver.Hurt += HandleHurt;
             damageReceiver.Guarded += HandleGuarded;
             damageReceiver.Parried += HandleParried;
@@ -58,6 +60,7 @@ namespace Cerberus.DebugTools
             combat.ActionStarted -= HandleActionStarted;
             combat.TargetHit -= HandleTargetHit;
             combat.HeadChanged -= HandleHeadChanged;
+            combat.SpecialToggled -= HandleSpecialToggled;
             damageReceiver.Hurt -= HandleHurt;
             damageReceiver.Guarded -= HandleGuarded;
             damageReceiver.Parried -= HandleParried;
@@ -70,6 +73,8 @@ namespace Cerberus.DebugTools
         private void HandleActionStarted(CombatAction action) => AddLog(GetCurrentActionText());
         private void HandleTargetHit(Collider2D target, AttackData attack) => AddLog($"Hit -> {target.name} ({attack.displayName})");
         private void HandleHeadChanged(int index, int step) => AddLog($"<color=lime>Switch -> {combat.Head.displayName}</color>");
+        private void HandleSpecialToggled(bool isOn) =>
+            AddLog(isOn ? $"<color=orange>{combat.SpecialName} ON</color>" : $"{combat.SpecialName} OFF");
         private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
         private void HandleGuarded(int damageTaken) => AddLog($"<color=cyan>Guard -{damageTaken}</color>");
         private void HandleParried() => AddLog("<color=yellow><b>PARRY!</b></color>");
@@ -111,7 +116,9 @@ namespace Cerberus.DebugTools
 
         private void DrawStatusPanel()
         {
-            GUILayout.BeginArea(statusPanelRect, panelStyle);
+            // 外層區域不畫背景，背景由內層的 Vertical 依內容高度畫出
+            GUILayout.BeginArea(new Rect(statusPanelPosition.x, statusPanelPosition.y, statusPanelWidth, Screen.height));
+            GUILayout.BeginVertical(panelStyle);
             HeadConfig head = combat.Head;
             GUILayout.Label($"<b>Controls</b>  ({head.displayName})", labelStyle);
             GUILayout.Label("Q / E            Switch Head", labelStyle);
@@ -125,6 +132,12 @@ namespace Cerberus.DebugTools
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);
             GUILayout.Label($"<b>Action</b> {GetCurrentActionText()}  {GetPhaseText()}", labelStyle);
             GUILayout.Label($"<b>Special</b> {combat.SpecialName}  {GetCooldownText()}", labelStyle);
+
+            // 變身這種持續開著的狀態不算「目前的動作」，另外列出來
+            if (!combat.Special.OccupiesAction && combat.Special.IsActive)
+                GUILayout.Label($"<color=orange>{combat.SpecialStatusText}</color>", labelStyle);
+
+            GUILayout.EndVertical();
             GUILayout.EndArea();
         }
 

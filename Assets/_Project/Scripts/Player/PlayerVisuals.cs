@@ -29,6 +29,7 @@ namespace Cerberus.Player
         [SerializeField] private Transform swordPivot;
         [SerializeField] private Transform shieldPivot;
         [SerializeField] private Transform gunPivot;
+        [SerializeField] private Transform cleaverPivot;
 
         [Header("Head Gear")]
         [SerializeField] private HeadGear[] headGears;
@@ -47,6 +48,18 @@ namespace Cerberus.Player
         [SerializeField] private float gunRecoilDistance = 0.15f;
         [Tooltip("開槍瞬間槍口上揚的角度")]
         [SerializeField] private float gunRecoilAngle = 12f;
+
+        [Header("Cleaver Pose (角度 0 = 刀朝上, 負值 = 往前倒)")]
+        [SerializeField] private float cleaverRestAngle = -35f;
+        [Tooltip("前搖時把刀舉到頭後方的角度")]
+        [SerializeField] private float cleaverRaiseAngle = 55f;
+        [Tooltip("判定時往前下劈到的角度")]
+        [SerializeField] private float cleaverSwingAngle = -125f;
+
+        [Header("Transformation")]
+        [Tooltip("變身中身體泛紅的顏色，會在原本顏色與此顏色之間脈動")]
+        [SerializeField] private Color transformedTint = new Color(0.9f, 0.15f, 0.1f);
+        [SerializeField] private float transformedPulseFrequency = 2.5f;
 
         [Header("Phase Colors (待機顏色在各顆頭的 HeadConfig)")]
         [SerializeField] private Color startupColor = new Color(1f, 0.85f, 0.2f);
@@ -130,6 +143,7 @@ namespace Cerberus.Player
             UpdateSword();
             UpdateShield();
             UpdateGun();
+            UpdateCleaver();
             bodyRenderer.color = GetBodyColor();
             UpdateVisibility();
         }
@@ -216,6 +230,28 @@ namespace Cerberus.Player
             gunPivot.localPosition = gunRestPosition + new Vector2(reach, 0f);
         }
 
+        private void UpdateCleaver()
+        {
+            float angle = cleaverRestAngle;
+
+            // 前搖：把刀舉到頭後 → 判定：快速往前下劈 → 硬直：慢慢收回
+            if (combat.IsAttacking && combat.CurrentAttack is MeleeAttackData)
+            {
+                float t = combat.PhaseProgress;
+
+                angle = combat.CurrentPhase switch
+                {
+                    ActionPhase.Startup => Mathf.Lerp(cleaverRestAngle, cleaverRaiseAngle, t),
+                    // 開根號讓前段揮得快，有「劈下去」的重量感
+                    ActionPhase.Active => Mathf.Lerp(cleaverRaiseAngle, cleaverSwingAngle, Mathf.Sqrt(t)),
+                    ActionPhase.Recovery => Mathf.Lerp(cleaverSwingAngle, cleaverRestAngle, t),
+                    _ => cleaverRestAngle
+                };
+            }
+
+            cleaverPivot.localRotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
         private Color GetShieldColor()
         {
             // 只有格檔才有完美格檔的盾牌提示，其他頭的特殊動作維持原色
@@ -238,8 +274,18 @@ namespace Cerberus.Player
                 ActionPhase.Startup => startupColor,
                 ActionPhase.Active => activeColor,
                 ActionPhase.Recovery => recoveryColor,
-                _ => combat.Head.bodyColor
+                _ => GetIdleBodyColor()
             };
+        }
+
+        private Color GetIdleBodyColor()
+        {
+            Color headColor = combat.Head.bodyColor;
+            if (!(combat.Special is TransformationSpecial { IsActive: true }))
+                return headColor;
+
+            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * transformedPulseFrequency * Mathf.PI * 2f);
+            return Color.Lerp(headColor, transformedTint, Mathf.Lerp(0.45f, 0.75f, pulse));
         }
 
         private void UpdateVisibility()

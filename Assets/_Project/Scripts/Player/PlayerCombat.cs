@@ -47,6 +47,7 @@ namespace Cerberus.Player
         public string SpecialStatusText => specialAbility.StatusText;
         public float SpecialCooldownRemaining => specialAbility.CooldownRemaining;
         public bool IsSpecialInvincible => specialAbility.IsInvincible;
+        public float DamageTakenMultiplier => specialAbility.DamageTakenMultiplier;
 
         /// <summary>目前階段的進度 0~1，給視覺與 HUD 使用</summary>
         public float PhaseProgress { get; private set; }
@@ -56,6 +57,8 @@ namespace Cerberus.Player
         public event Action<Collider2D, AttackData> TargetHit;
         /// <summary>換頭時觸發，參數為新的頭的索引與切換方向（+1 = 下一顆，-1 = 上一顆）</summary>
         public event Action<int, int> HeadChanged;
+        /// <summary>不佔用行動的特殊動作（變身）開啟或關閉時觸發，參數為是否開啟</summary>
+        public event Action<bool> SpecialToggled;
 
         private SpecialAbility specialAbility;
         // 每顆頭的特殊動作只建立一次並保留，切換頭時執行期狀態（冷卻）不會重置，會在背景繼續倒數
@@ -77,11 +80,20 @@ namespace Cerberus.Player
             specialAbility = GetOrCreateSpecial(Head.special);
         }
 
-        /// <summary>出招、特殊動作進行中不能換頭。換頭後原本那顆頭的特殊動作冷卻會在背景繼續倒數。</summary>
+        /// <summary>
+        /// 出招、特殊動作進行中不能換頭。換頭後原本那顆頭的特殊動作冷卻會在背景繼續倒數。
+        /// 還開著的狀態型特殊動作（變身）會先關閉並進入冷卻，不能靠換頭甩掉代價或把效果帶到別顆頭。
+        /// </summary>
         public bool TrySwitchHead(int step)
         {
             if (IsBusy || heads.Length < 2)
                 return false;
+
+            if (specialAbility.IsActive)
+            {
+                specialAbility.Cancel();
+                SpecialToggled?.Invoke(false);
+            }
 
             int count = heads.Length;
             CurrentHeadIndex = ((CurrentHeadIndex + step) % count + count) % count;
@@ -124,9 +136,23 @@ namespace Cerberus.Player
             return true;
         }
 
-        /// <summary>每幀呼叫，把特殊鍵的狀態轉交給 SpecialAbility。攻擊中不會被打斷。</summary>
+        /// <summary>
+        /// 每幀呼叫，把特殊鍵的狀態轉交給 SpecialAbility。
+        /// 佔用行動的特殊動作在攻擊中不會被觸發；不佔用的（變身）攻擊中也能開關，也不會變成目前的動作。
+        /// </summary>
         public void UpdateSpecial(bool pressed, bool held, int facing)
         {
+            if (!specialAbility.OccupiesAction)
+            {
+                bool wasActive = specialAbility.IsActive;
+                specialAbility.Tick(pressed, held, facing);
+
+                if (specialAbility.IsActive != wasActive)
+                    SpecialToggled?.Invoke(specialAbility.IsActive);
+
+                return;
+            }
+
             if (IsAttacking)
                 return;
 
@@ -252,7 +278,7 @@ namespace Cerberus.Player
                 if (damageable == null)
                     continue;
 
-                var info = new DamageInfo(melee.damage, transform.position, melee.knockbackForce);
+                var info = new DamageInfo(ScaleDamage(melee.damage), transform.position, melee.knockbackForce);
 
                 if (damageable.TakeDamage(info) == DamageResult.Hit)
                     TargetHit?.Invoke(target, melee);
@@ -262,13 +288,17 @@ namespace Cerberus.Player
         private void FireProjectiles(ProjectileAttackData shot)
         {
             Vector2 muzzle = shot.GetMuzzlePosition(transform.position, attackFacing);
+            int damage = ScaleDamage(shot.damage);
 
             for (int i = 0; i < shot.projectileCount; i++)
             {
                 Projectile projectile = Instantiate(shot.projectilePrefab, muzzle, Quaternion.identity, projectileParent);
-                projectile.Launch(shot, shot.GetDirection(i, attackFacing), hittableLayers, target => TargetHit?.Invoke(target, shot));
+                projectile.Launch(shot, shot.GetDirection(i, attackFacing), damage, hittableLayers, target => TargetHit?.Invoke(target, shot));
             }
         }
+
+        // 特殊動作（例如變身）對造成傷害的加成
+        private int ScaleDamage(int baseDamage) => Mathf.RoundToInt(baseDamage * specialAbility.DamageDealtMultiplier);
 
         private void OnDrawGizmosSelected()
         {

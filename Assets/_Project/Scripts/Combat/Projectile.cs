@@ -14,15 +14,18 @@ namespace Cerberus.Combat
         [SerializeField] private LayerMask obstacleLayers;
 
         private ProjectileAttackData attack;
+        private int damage;
         private Vector2 direction;
         private float remainingDistance;
         private LayerMask targetLayers;
         private Action<Collider2D> onTargetHit;
 
+        /// <param name="damageAmount">實際傷害，已套用發射者身上的加成（例如變身）</param>
         /// <param name="onTargetHit">一般命中目標（不含無敵、被格檔）時呼叫，用來觸發命中回饋</param>
-        public void Launch(ProjectileAttackData attackData, Vector2 flyDirection, LayerMask targets, Action<Collider2D> onTargetHit)
+        public void Launch(ProjectileAttackData attackData, Vector2 flyDirection, int damageAmount, LayerMask targets, Action<Collider2D> onTargetHit)
         {
             attack = attackData;
+            damage = damageAmount;
             direction = flyDirection.normalized;
             remainingDistance = attackData.maxRange;
             targetLayers = targets;
@@ -58,7 +61,7 @@ namespace Cerberus.Combat
 
             if (damageable != null)
             {
-                var info = new DamageInfo(attack.damage, transform.position, attack.knockbackForce);
+                var info = new DamageInfo(damage, transform.position, attack.knockbackForce);
                 if (damageable.TakeDamage(info) == DamageResult.Hit)
                     onTargetHit?.Invoke(target);
             }

@@ -10,7 +10,8 @@ namespace Cerberus.Player
     ///
     /// 冷卻由這裡統一處理，子類別不用自己寫：
     /// - 特殊動作結束（IsActive 由 true 變 false，或被 Cancel）時開始冷卻。
-    /// - 冷卻中按鍵完全不會傳給子類別，不能啟動。
+    /// - 開關型（StartsCooldownOnActivate）在開啟時也會開始冷卻，開與關共用同一個冷卻。
+    /// - 冷卻中不接受新的按下，沒在進行中的特殊動作也收不到按住。
     /// </summary>
     public abstract class SpecialAbility
     {
@@ -34,6 +35,18 @@ namespace Cerberus.Player
         /// <summary>這個當下是否無敵（例如衝刺途中），受到攻擊時直接忽略</summary>
         public virtual bool IsInvincible => false;
 
+        /// <summary>
+        /// 進行中是否佔用角色的行動：佔用時不能出招、地面上會定身、受傷會被中斷（格檔、衝刺）。
+        /// 持續開著的狀態（變身）不佔用，開著時一樣能移動、出招。
+        /// </summary>
+        public virtual bool OccupiesAction => true;
+
+        /// <summary>玩家造成的傷害倍率（例如變身中提高）</summary>
+        public virtual float DamageDealtMultiplier => 1f;
+
+        /// <summary>玩家受到的傷害倍率（例如變身中提高）</summary>
+        public virtual float DamageTakenMultiplier => 1f;
+
         public bool IsOnCooldown => Time.time < cooldownEndTime;
         public float CooldownRemaining => Mathf.Max(0f, cooldownEndTime - Time.time);
 
@@ -46,19 +59,28 @@ namespace Cerberus.Player
         /// </summary>
         public void Tick(bool pressed, bool held, int facing)
         {
-            if (!IsActive && IsOnCooldown)
+            if (IsOnCooldown)
             {
                 pressed = false;
-                held = false;
+
+                if (!IsActive)
+                    held = false;
             }
 
             bool wasActive = IsActive;
             OnTick(pressed, held, facing);
 
             if (!wasActive && IsActive)
+            {
                 isCooldownWaived = false;
+
+                if (StartsCooldownOnActivate)
+                    BeginCooldown();
+            }
             else if (wasActive && !IsActive)
+            {
                 BeginCooldown();
+            }
         }
 
         public void Cancel()
@@ -89,6 +111,9 @@ namespace Cerberus.Player
         protected abstract void OnTick(bool pressed, bool held, int facing);
 
         protected virtual void OnCancel() { }
+
+        /// <summary>開啟時也開始冷卻，讓開與關共用同一個冷卻（開關型特殊動作使用）</summary>
+        protected virtual bool StartsCooldownOnActivate => false;
 
         /// <summary>免除這次使用的冷卻（例如完美格檔成功的獎勵）。已經開始的冷卻會清掉，還沒開始的不會開始。</summary>
         protected void WaiveCooldown()

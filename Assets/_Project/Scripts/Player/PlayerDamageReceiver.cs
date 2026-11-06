@@ -66,6 +66,9 @@ namespace Cerberus.Player
             if (isDead || IsInvincible)
                 return DamageResult.Ignored;
 
+            // 先套用特殊動作的受傷加成（例如變身），再交給格檔等判定減傷
+            info.amount = Mathf.RoundToInt(info.amount * combat.DamageTakenMultiplier);
+
             DamageResult result = combat.ResolveIncomingHit(ref info);
 
             switch (result)
