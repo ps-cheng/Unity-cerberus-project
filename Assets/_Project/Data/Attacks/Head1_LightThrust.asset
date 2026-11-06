@@ -16,13 +16,13 @@ MonoBehaviour:
   startupDuration: 0.06
   activeDuration: 0.1
   recoveryDuration: 0.14
-  hitboxOffset: {x: 1.15, y: 0.35}
-  hitboxSize: {x: 1.5, y: 0.4}
   damage: 10
   knockbackForce: 3
-  windupDistance: 0.15
-  thrustDistance: 0.6
   hitFeedback:
     hitStopDuration: 0.04
     shakeAmplitude: 0.06
     shakeDuration: 0.1
+  hitboxOffset: {x: 1.15, y: 0.35}
+  hitboxSize: {x: 1.5, y: 0.8}
+  windupDistance: 0.15
+  thrustDistance: 0.6

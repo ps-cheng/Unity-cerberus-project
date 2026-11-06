@@ -51,12 +51,14 @@ namespace Cerberus.Player
 
         [Header("Claw Pose (角度 0 = 爪子朝前, 正值 = 往上舉)")]
         [SerializeField] private float clawRestAngle = -15f;
-        [Tooltip("前搖時把爪子舉高往後拉的角度")]
-        [SerializeField] private float clawRaiseAngle = 75f;
-        [Tooltip("判定時往前下抓到的角度")]
-        [SerializeField] private float clawSwipeAngle = -70f;
-        [Tooltip("前搖時爪子往後拉、判定時往前探的距離")]
-        [SerializeField] private float clawReach = 0.25f;
+        [Tooltip("前搖時把爪子高舉過頭的角度")]
+        [SerializeField] private float clawRaiseAngle = 100f;
+        [Tooltip("判定時由上往下揮到的角度")]
+        [SerializeField] private float clawSwipeAngle = -100f;
+        [Tooltip("前搖時手臂抬高、判定時往下砸的距離")]
+        [SerializeField] private float clawLift = 0.35f;
+        [Tooltip("判定時手臂往前探的距離")]
+        [SerializeField] private float clawReach = 0.15f;
 
         [Header("Transformation")]
         [Tooltip("變身中身體泛紅的顏色，會在原本顏色與此顏色之間脈動")]
@@ -237,34 +239,36 @@ namespace Cerberus.Player
         private void UpdateClaw()
         {
             float angle = clawRestAngle;
-            float reach = 0f;
+            Vector2 offset = Vector2.zero;
 
-            // 前搖：爪子舉高往後拉 → 判定：往前下方抓過去 → 硬直：慢慢收回
+            // 前搖：爪子高舉過頭 → 判定：由上往下揮砸 → 硬直：慢慢收回
             if (combat.IsAttacking && combat.CurrentAttack is MeleeAttackData)
             {
                 float t = combat.PhaseProgress;
+                Vector2 raisedOffset = new Vector2(0f, clawLift);
+                Vector2 slammedOffset = new Vector2(clawReach, -clawLift);
 
                 switch (combat.CurrentPhase)
                 {
                     case ActionPhase.Startup:
                         angle = Mathf.Lerp(clawRestAngle, clawRaiseAngle, t);
-                        reach = Mathf.Lerp(0f, -clawReach, t);
+                        offset = Vector2.Lerp(Vector2.zero, raisedOffset, t);
                         break;
                     case ActionPhase.Active:
-                        // 開根號讓前段抓得快，有「撕下去」的重量感
+                        // 開根號讓前段揮得快，有「砸下去」的重量感
                         float swipe = Mathf.Sqrt(t);
                         angle = Mathf.Lerp(clawRaiseAngle, clawSwipeAngle, swipe);
-                        reach = Mathf.Lerp(-clawReach, clawReach, swipe);
+                        offset = Vector2.Lerp(raisedOffset, slammedOffset, swipe);
                         break;
                     case ActionPhase.Recovery:
                         angle = Mathf.Lerp(clawSwipeAngle, clawRestAngle, t);
-                        reach = Mathf.Lerp(clawReach, 0f, t);
+                        offset = Vector2.Lerp(slammedOffset, Vector2.zero, t);
                         break;
                 }
             }
 
             clawPivot.localRotation = Quaternion.Euler(0f, 0f, angle);
-            clawPivot.localPosition = clawRestPosition + new Vector2(reach, 0f);
+            clawPivot.localPosition = clawRestPosition + offset;
         }
 
         private Color GetShieldColor()

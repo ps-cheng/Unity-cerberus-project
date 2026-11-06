@@ -1357,9 +1357,10 @@ MonoBehaviour:
   gunRecoilDistance: 0.15
   gunRecoilAngle: 12
   clawRestAngle: -15
-  clawRaiseAngle: 75
-  clawSwipeAngle: -70
-  clawReach: 0.25
+  clawRaiseAngle: 100
+  clawSwipeAngle: -100
+  clawLift: 0.35
+  clawReach: 0.15
   transformedTint: {r: 0.9, g: 0.15, b: 0.1, a: 1}
   transformedPulseFrequency: 2.5
   startupColor: {r: 1, g: 0.85, b: 0.2, a: 1}
