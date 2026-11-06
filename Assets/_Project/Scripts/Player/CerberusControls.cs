@@ -143,6 +143,26 @@ namespace Cerberus.Player
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""PreviousHead"",
+                    ""type"": ""Button"",
+                    ""id"": ""8c51f114-5900-4cb8-ae00-ac9d1f2fd0fa"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""NextHead"",
+                    ""type"": ""Button"",
+                    ""id"": ""cb20e762-2780-4a9e-9e39-73627784e61d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -376,6 +396,50 @@ namespace Cerberus.Player
                     ""action"": ""Special"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9364c740-dc2f-42e7-aacb-62c4c44be214"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""PreviousHead"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2cd11374-5dd0-421d-bb03-53efa52f11f8"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""PreviousHead"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""50e43a28-1fb3-4679-a877-7fd3c64e9b43"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""NextHead"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed930039-2b93-43ad-a8db-29e3a1254e1c"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""NextHead"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -417,6 +481,8 @@ namespace Cerberus.Player
             m_Gameplay_LightAttack = m_Gameplay.FindAction("LightAttack", throwIfNotFound: true);
             m_Gameplay_HeavyAttack = m_Gameplay.FindAction("HeavyAttack", throwIfNotFound: true);
             m_Gameplay_Special = m_Gameplay.FindAction("Special", throwIfNotFound: true);
+            m_Gameplay_PreviousHead = m_Gameplay.FindAction("PreviousHead", throwIfNotFound: true);
+            m_Gameplay_NextHead = m_Gameplay.FindAction("NextHead", throwIfNotFound: true);
         }
 
         ~@CerberusControls()
@@ -502,6 +568,8 @@ namespace Cerberus.Player
         private readonly InputAction m_Gameplay_LightAttack;
         private readonly InputAction m_Gameplay_HeavyAttack;
         private readonly InputAction m_Gameplay_Special;
+        private readonly InputAction m_Gameplay_PreviousHead;
+        private readonly InputAction m_Gameplay_NextHead;
         /// <summary>
         /// Provides access to input actions defined in input action map "Gameplay".
         /// </summary>
@@ -533,6 +601,14 @@ namespace Cerberus.Player
             /// Provides access to the underlying input action "Gameplay/Special".
             /// </summary>
             public InputAction @Special => m_Wrapper.m_Gameplay_Special;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/PreviousHead".
+            /// </summary>
+            public InputAction @PreviousHead => m_Wrapper.m_Gameplay_PreviousHead;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/NextHead".
+            /// </summary>
+            public InputAction @NextHead => m_Wrapper.m_Gameplay_NextHead;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -574,6 +650,12 @@ namespace Cerberus.Player
                 @Special.started += instance.OnSpecial;
                 @Special.performed += instance.OnSpecial;
                 @Special.canceled += instance.OnSpecial;
+                @PreviousHead.started += instance.OnPreviousHead;
+                @PreviousHead.performed += instance.OnPreviousHead;
+                @PreviousHead.canceled += instance.OnPreviousHead;
+                @NextHead.started += instance.OnNextHead;
+                @NextHead.performed += instance.OnNextHead;
+                @NextHead.canceled += instance.OnNextHead;
             }
 
             /// <summary>
@@ -600,6 +682,12 @@ namespace Cerberus.Player
                 @Special.started -= instance.OnSpecial;
                 @Special.performed -= instance.OnSpecial;
                 @Special.canceled -= instance.OnSpecial;
+                @PreviousHead.started -= instance.OnPreviousHead;
+                @PreviousHead.performed -= instance.OnPreviousHead;
+                @PreviousHead.canceled -= instance.OnPreviousHead;
+                @NextHead.started -= instance.OnNextHead;
+                @NextHead.performed -= instance.OnNextHead;
+                @NextHead.canceled -= instance.OnNextHead;
             }
 
             /// <summary>
@@ -701,6 +789,20 @@ namespace Cerberus.Player
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnSpecial(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "PreviousHead" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnPreviousHead(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "NextHead" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnNextHead(InputAction.CallbackContext context);
         }
     }
 }

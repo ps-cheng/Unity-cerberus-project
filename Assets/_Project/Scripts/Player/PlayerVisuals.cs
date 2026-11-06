@@ -1,14 +1,24 @@
+using System;
 using Cerberus.Combat;
 using UnityEngine;
 
 namespace Cerberus.Player
 {
     /// <summary>
-    /// 用幾何圖形的位移與旋轉代替動畫：翻轉面向、刺劍、舉盾、依招式階段變色、受傷閃爍。
+    /// 用幾何圖形的位移與旋轉代替動畫：翻轉面向、刺劍、舉盾、開槍後座力、依招式階段變色、受傷閃爍。
+    /// 換頭時切換手上的裝備（劍盾 / 槍）與身體顏色。
     /// 之後換成正式美術時，整支替換成 Animator 驅動即可，不影響遊戲邏輯。
     /// </summary>
     public class PlayerVisuals : MonoBehaviour
     {
+        [Serializable]
+        private class HeadGear
+        {
+            public HeadConfig head;
+            [Tooltip("這顆頭手上的裝備，換到這顆頭時才顯示")]
+            public GameObject gearRoot;
+        }
+
         [Header("References")]
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerCombat combat;
@@ -18,6 +28,10 @@ namespace Cerberus.Player
         [SerializeField] private SpriteRenderer bodyRenderer;
         [SerializeField] private Transform swordPivot;
         [SerializeField] private Transform shieldPivot;
+        [SerializeField] private Transform gunPivot;
+
+        [Header("Head Gear")]
+        [SerializeField] private HeadGear[] headGears;
 
         [Header("Sword Pose (角度 0 = 劍尖朝上, -90 = 朝前)")]
         [SerializeField] private float swordRestAngle = -130f;
@@ -28,8 +42,13 @@ namespace Cerberus.Player
         [SerializeField] private Vector2 shieldBlockPosition = new Vector2(0.5f, 0.25f);
         [SerializeField] private float shieldMoveSpeed = 25f;
 
-        [Header("Phase Colors")]
-        [SerializeField] private Color idleColor = new Color(0.55f, 0.35f, 0.25f);
+        [Header("Gun Pose")]
+        [Tooltip("開槍瞬間槍往後退的距離")]
+        [SerializeField] private float gunRecoilDistance = 0.15f;
+        [Tooltip("開槍瞬間槍口上揚的角度")]
+        [SerializeField] private float gunRecoilAngle = 12f;
+
+        [Header("Phase Colors (待機顏色在各顆頭的 HeadConfig)")]
         [SerializeField] private Color startupColor = new Color(1f, 0.85f, 0.2f);
         [SerializeField] private Color activeColor = new Color(1f, 0.25f, 0.2f);
         [SerializeField] private Color recoveryColor = new Color(0.45f, 0.45f, 0.5f);
@@ -51,6 +70,7 @@ namespace Cerberus.Player
         [SerializeField] private float blinkFrequency = 15f;
 
         private Vector2 swordRestPosition;
+        private Vector2 gunRestPosition;
         private SpriteRenderer[] visualRenderers;
         private SpriteRenderer shieldRenderer;
         private Color shieldBaseColor;
@@ -62,21 +82,35 @@ namespace Cerberus.Player
         private void Awake()
         {
             swordRestPosition = swordPivot.localPosition;
-            visualRenderers = visualRoot.GetComponentsInChildren<SpriteRenderer>();
-            shieldRenderer = shieldPivot.GetComponentInChildren<SpriteRenderer>();
+            gunRestPosition = gunPivot.localPosition;
+            // 包含目前隱藏的裝備，換頭後受傷閃爍才會套用到新裝備上
+            visualRenderers = visualRoot.GetComponentsInChildren<SpriteRenderer>(true);
+            shieldRenderer = shieldPivot.GetComponentInChildren<SpriteRenderer>(true);
             shieldBaseColor = shieldRenderer.color;
         }
+
+        private void Start() => ShowGearFor(combat.Head);
 
         private void OnEnable()
         {
             damageReceiver.Guarded += HandleGuarded;
             damageReceiver.Parried += HandleParried;
+            combat.HeadChanged += HandleHeadChanged;
         }
 
         private void OnDisable()
         {
             damageReceiver.Guarded -= HandleGuarded;
             damageReceiver.Parried -= HandleParried;
+            combat.HeadChanged -= HandleHeadChanged;
+        }
+
+        private void HandleHeadChanged(int index, int step) => ShowGearFor(combat.Head);
+
+        private void ShowGearFor(HeadConfig head)
+        {
+            foreach (HeadGear gear in headGears)
+                gear.gearRoot.SetActive(gear.head == head);
         }
 
         private void HandleGuarded(int damageTaken) => StartShieldFlash(guardFlashColor, guardFlashDuration, 1f);
@@ -95,6 +129,7 @@ namespace Cerberus.Player
             visualRoot.localScale = new Vector3(movement.FacingDirection, 1f, 1f);
             UpdateSword();
             UpdateShield();
+            UpdateGun();
             bodyRenderer.color = GetBodyColor();
             UpdateVisibility();
         }
@@ -151,6 +186,36 @@ namespace Cerberus.Player
             shieldPivot.localScale = Vector3.one;
         }
 
+        private void UpdateGun()
+        {
+            float angle = 0f;
+            float reach = 0f;
+
+            // 前搖：槍微微往後收 → 開槍：後座力往後退並上揚 → 硬直：慢慢回到原位
+            if (combat.IsAttacking && combat.CurrentAttack is ProjectileAttackData)
+            {
+                float t = combat.PhaseProgress;
+
+                switch (combat.CurrentPhase)
+                {
+                    case ActionPhase.Startup:
+                        reach = Mathf.Lerp(0f, -gunRecoilDistance * 0.3f, t);
+                        break;
+                    case ActionPhase.Active:
+                        reach = -gunRecoilDistance;
+                        angle = gunRecoilAngle;
+                        break;
+                    case ActionPhase.Recovery:
+                        reach = Mathf.Lerp(-gunRecoilDistance, 0f, t);
+                        angle = Mathf.Lerp(gunRecoilAngle, 0f, t);
+                        break;
+                }
+            }
+
+            gunPivot.localRotation = Quaternion.Euler(0f, 0f, angle);
+            gunPivot.localPosition = gunRestPosition + new Vector2(reach, 0f);
+        }
+
         private Color GetShieldColor()
         {
             // 只有格檔才有完美格檔的盾牌提示，其他頭的特殊動作維持原色
@@ -173,7 +238,7 @@ namespace Cerberus.Player
                 ActionPhase.Startup => startupColor,
                 ActionPhase.Active => activeColor,
                 ActionPhase.Recovery => recoveryColor,
-                _ => idleColor
+                _ => combat.Head.bodyColor
             };
         }
 

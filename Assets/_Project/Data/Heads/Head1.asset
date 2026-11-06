@@ -16,3 +16,4 @@ MonoBehaviour:
   lightAttack: {fileID: 11400000, guid: 34b9fd96f3bb3724398cfdcd4640e507, type: 2}
   heavyAttack: {fileID: 11400000, guid: 65c8611817a9df84f90d1ca9659bad3e, type: 2}
   special: {fileID: 11400000, guid: 94c929841bf8ab04099041698509d3a6, type: 2}
+  bodyColor: {r: 0.55, g: 0.35, b: 0.25, a: 1}

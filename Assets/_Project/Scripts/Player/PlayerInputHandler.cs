@@ -20,6 +20,8 @@ namespace Cerberus.Player
         // 特殊動作依角色而不同（第一顆頭是格檔），所以只叫 Special
         public bool SpecialPressed => gameplay.Special.WasPressedThisFrame();
         public bool SpecialHeld => gameplay.Special.IsPressed();
+        public bool PreviousHeadPressed => gameplay.PreviousHead.WasPressedThisFrame();
+        public bool NextHeadPressed => gameplay.NextHead.WasPressedThisFrame();
 
         private void Awake()
         {

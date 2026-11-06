@@ -13,9 +13,10 @@ namespace Cerberus.Player
     /// </summary>
     public class PlayerCombat : MonoBehaviour, ICombatZoneSource
     {
-        [Header("Head")]
-        [Tooltip("目前這顆頭的招式組合（弱攻擊、強攻擊、特殊動作）")]
-        [SerializeField] private HeadConfig head;
+        [Header("Heads")]
+        [Tooltip("可切換的頭，依序為 1、2、3 號，Q / E 循環切換。每顆頭是一組招式（弱攻擊、強攻擊、特殊動作）")]
+        [SerializeField] private HeadConfig[] heads;
+        [SerializeField, Min(0)] private int startingHeadIndex;
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hittableLayers;
@@ -24,7 +25,9 @@ namespace Cerberus.Player
         [Tooltip("發射的子彈放在這個物件底下，保持 Hierarchy 整齊")]
         [SerializeField] private Transform projectileParent;
 
-        public HeadConfig Head => head;
+        public IReadOnlyList<HeadConfig> Heads => heads;
+        public int CurrentHeadIndex { get; private set; }
+        public HeadConfig Head => heads[CurrentHeadIndex];
         public SpecialAbility Special => specialAbility;
         public CombatAction CurrentAction { get; private set; }
         public ActionPhase CurrentPhase { get; private set; }
@@ -51,6 +54,8 @@ namespace Cerberus.Player
         public event Action<CombatAction> ActionStarted;
         /// <summary>攻擊一般命中目標（不含被格檔、目標無敵）時觸發，附上是哪一招</summary>
         public event Action<Collider2D, AttackData> TargetHit;
+        /// <summary>換頭時觸發，參數為新的頭的索引與切換方向（+1 = 下一顆，-1 = 上一顆）</summary>
+        public event Action<int, int> HeadChanged;
 
         private SpecialAbility specialAbility;
         // 每顆頭的特殊動作只建立一次並保留，切換頭時執行期狀態（冷卻）不會重置，會在背景繼續倒數
@@ -68,7 +73,21 @@ namespace Cerberus.Player
             hitFilter.SetLayerMask(hittableLayers);
             hitFilter.useTriggers = true;
 
-            specialAbility = GetOrCreateSpecial(head.special);
+            CurrentHeadIndex = Mathf.Clamp(startingHeadIndex, 0, heads.Length - 1);
+            specialAbility = GetOrCreateSpecial(Head.special);
+        }
+
+        /// <summary>出招、特殊動作進行中不能換頭。換頭後原本那顆頭的特殊動作冷卻會在背景繼續倒數。</summary>
+        public bool TrySwitchHead(int step)
+        {
+            if (IsBusy || heads.Length < 2)
+                return false;
+
+            int count = heads.Length;
+            CurrentHeadIndex = ((CurrentHeadIndex + step) % count + count) % count;
+            specialAbility = GetOrCreateSpecial(Head.special);
+            HeadChanged?.Invoke(CurrentHeadIndex, step);
+            return true;
         }
 
         private SpecialAbility GetOrCreateSpecial(SpecialAbilityData data)
@@ -89,8 +108,8 @@ namespace Cerberus.Player
 
             CurrentAttack = attackType switch
             {
-                CombatAction.LightAttack => head.lightAttack,
-                CombatAction.HeavyAttack => head.heavyAttack,
+                CombatAction.LightAttack => Head.lightAttack,
+                CombatAction.HeavyAttack => Head.heavyAttack,
                 _ => null
             };
 
@@ -253,8 +272,12 @@ namespace Cerberus.Player
 
         private void OnDrawGizmosSelected()
         {
-            // 未執行時在 Scene 視窗預覽這顆頭的招式範圍（以面向右為準）
-            if (Application.isPlaying || head == null)
+            // 未執行時在 Scene 視窗預覽起始那顆頭的招式範圍（以面向右為準）
+            if (Application.isPlaying || heads == null || startingHeadIndex >= heads.Length)
+                return;
+
+            HeadConfig head = heads[startingHeadIndex];
+            if (head == null)
                 return;
 
             Vector2 origin = transform.position;

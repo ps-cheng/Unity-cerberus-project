@@ -38,6 +38,12 @@ namespace Cerberus.Player
 
         private void HandleCombatInput()
         {
+            // 先換頭再出招：同一幀按下的話，用的是新的頭的招式
+            if (input.NextHeadPressed)
+                combat.TrySwitchHead(1);
+            else if (input.PreviousHeadPressed)
+                combat.TrySwitchHead(-1);
+
             // 同一幀同時按下時，強攻擊優先
             if (input.HeavyAttackPressed)
                 StartAttack(CombatAction.HeavyAttack);

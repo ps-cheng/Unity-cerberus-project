@@ -21,6 +21,8 @@ namespace Cerberus.DebugTools
         [SerializeField] private PlayerCombat combat;
         [SerializeField] private PlayerDamageReceiver damageReceiver;
         [SerializeField] private Health playerHealth;
+        [Tooltip("左上角留給換頭轉盤，狀態面板放在它下面")]
+        [SerializeField] private Rect statusPanelRect = new Rect(10f, 110f, 460f, 320f);
         [SerializeField] private Vector3 labelWorldOffset = new Vector3(0f, 1.6f, 0f);
         [SerializeField] private int maxLogEntries = 8;
         [SerializeField] private float logLifetime = 2.5f;
@@ -41,6 +43,7 @@ namespace Cerberus.DebugTools
             movement.Jumped += HandleJumped;
             combat.ActionStarted += HandleActionStarted;
             combat.TargetHit += HandleTargetHit;
+            combat.HeadChanged += HandleHeadChanged;
             damageReceiver.Hurt += HandleHurt;
             damageReceiver.Guarded += HandleGuarded;
             damageReceiver.Parried += HandleParried;
@@ -54,6 +57,7 @@ namespace Cerberus.DebugTools
             movement.Jumped -= HandleJumped;
             combat.ActionStarted -= HandleActionStarted;
             combat.TargetHit -= HandleTargetHit;
+            combat.HeadChanged -= HandleHeadChanged;
             damageReceiver.Hurt -= HandleHurt;
             damageReceiver.Guarded -= HandleGuarded;
             damageReceiver.Parried -= HandleParried;
@@ -65,6 +69,7 @@ namespace Cerberus.DebugTools
         private void HandleJumped() => AddLog("Jump");
         private void HandleActionStarted(CombatAction action) => AddLog(GetCurrentActionText());
         private void HandleTargetHit(Collider2D target, AttackData attack) => AddLog($"Hit -> {target.name} ({attack.displayName})");
+        private void HandleHeadChanged(int index, int step) => AddLog($"<color=lime>Switch -> {combat.Head.displayName}</color>");
         private void HandleHurt(int amount) => AddLog($"<color=red>Hurt -{amount}</color>");
         private void HandleGuarded(int damageTaken) => AddLog($"<color=cyan>Guard -{damageTaken}</color>");
         private void HandleParried() => AddLog("<color=yellow><b>PARRY!</b></color>");
@@ -106,9 +111,10 @@ namespace Cerberus.DebugTools
 
         private void DrawStatusPanel()
         {
-            GUILayout.BeginArea(new Rect(10, 10, 460, 300), panelStyle);
+            GUILayout.BeginArea(statusPanelRect, panelStyle);
             HeadConfig head = combat.Head;
             GUILayout.Label($"<b>Controls</b>  ({head.displayName})", labelStyle);
+            GUILayout.Label("Q / E            Switch Head", labelStyle);
             GUILayout.Label("A / D / Arrows   Move", labelStyle);
             GUILayout.Label("Space            Jump (hold = higher)", labelStyle);
             GUILayout.Label($"J / Z / LMB      Light: {head.lightAttack.displayName}", labelStyle);

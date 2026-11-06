@@ -14,5 +14,9 @@ namespace Cerberus.Player
         public AttackData lightAttack;
         public AttackData heavyAttack;
         public SpecialAbilityData special;
+
+        [Header("Visual")]
+        [Tooltip("待機時的身體顏色，出招時仍會依階段變色")]
+        public Color bodyColor = new Color(0.55f, 0.35f, 0.25f);
     }
 }
