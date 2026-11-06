@@ -10,6 +10,9 @@ namespace Cerberus.Player
     {
         public string displayName = "Special";
 
+        [Tooltip("HUD 上的操作說明，例如「tap = dash」")]
+        public string controlHint;
+
         [Tooltip("特殊動作結束後要等多久才能再用，冷卻中完全不能啟動")]
         [Min(0f)] public float cooldownDuration;
 

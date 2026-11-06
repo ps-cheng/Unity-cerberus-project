@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe2a5728c2305646902589004d509ea, type: 3}
+  m_Name: Head2_GunShot
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.ProjectileAttackData
+  displayName: Gun Shot
+  startupDuration: 0.05
+  activeDuration: 0.03
+  recoveryDuration: 0.1
+  damage: 4
+  knockbackForce: 1.5
+  hitFeedback:
+    hitStopDuration: 0.02
+    shakeAmplitude: 0.03
+    shakeDuration: 0.06
+  projectilePrefab: {fileID: 4609521106112819883, guid: cbede2901b4d44143873814f42d0c3e9, type: 3}
+  muzzleOffset: {x: 0.6, y: 0.3}
+  projectileSpeed: 22
+  maxRange: 9
+  projectileCount: 1
+  spreadAngle: 0

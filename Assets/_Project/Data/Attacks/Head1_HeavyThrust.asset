@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bac4d04c09a58f34f84fb8f038aba205, type: 3}
+  m_Script: {fileID: 11500000, guid: 030bcd5e8a1bfa047b4ab1dfaf75a2d3, type: 3}
   m_Name: Head1_HeavyThrust
-  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.AttackData
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.MeleeAttackData
   displayName: Heavy Thrust
   startupDuration: 0.28
   activeDuration: 0.16

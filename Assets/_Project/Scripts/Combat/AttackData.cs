@@ -3,12 +3,11 @@ using UnityEngine;
 namespace Cerberus.Combat
 {
     /// <summary>
-    /// 一招攻擊的數值設定，存成獨立的 .asset 檔（Assets/_Project/Data/Attacks）。
-    /// 所有參照同一個檔案的角色共用這份數值；Play Mode 中調整的數值停止後會保留。
-    /// 執行時只讀不寫，每個角色各自變動的狀態（血量、目前階段）不要放在這裡。
+    /// 一招攻擊的共通數值（階段時間、傷害、擊退、命中回饋），存成獨立的 .asset 檔（Assets/_Project/Data/Attacks）。
+    /// 怎麼命中由子類別決定：近戰判定框 = MeleeAttackData，發射子彈 = ProjectileAttackData。
+    /// 所有參照同一個檔案的角色共用這份數值；執行時只讀不寫。
     /// </summary>
-    [CreateAssetMenu(fileName = "NewAttack", menuName = "Cerberus/Attack Data")]
-    public class AttackData : ScriptableObject
+    public abstract class AttackData : ScriptableObject
     {
         public string displayName = "Attack";
 
@@ -21,20 +20,10 @@ namespace Cerberus.Combat
         [Tooltip("硬直：判定結束到可以再行動的時間")]
         [Min(0f)] public float recoveryDuration = 0.2f;
 
-        [Tooltip("判定框中心相對角色的位置，x 會依面向自動翻轉")]
-        public Vector2 hitboxOffset = new Vector2(1f, 0f);
-
-        public Vector2 hitboxSize = Vector2.one;
-
+        [Tooltip("每次命中的傷害（射擊類是每一發子彈的傷害）")]
         [Min(0)] public int damage = 10;
 
         public float knockbackForce = 3f;
-
-        [Tooltip("前搖時劍往後收的距離（純視覺）")]
-        public float windupDistance = 0.2f;
-
-        [Tooltip("判定時劍往前刺出的距離（純視覺）")]
-        public float thrustDistance = 0.6f;
 
         [Tooltip("命中時的 hit-stop 與鏡頭震動")]
         public HitFeedbackData hitFeedback = new HitFeedbackData();

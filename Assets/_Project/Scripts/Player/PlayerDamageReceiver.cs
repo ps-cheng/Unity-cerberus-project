@@ -30,7 +30,7 @@ namespace Cerberus.Player
         [Header("Respawn")]
         [SerializeField] private float respawnDelay = 1f;
 
-        public bool IsInvincible => Time.time < invincibleUntil;
+        public bool IsInvincible => Time.time < invincibleUntil || combat.IsSpecialInvincible;
         public bool IsStunned => isDead || Time.time < stunnedUntil;
         public bool IsDead => isDead;
         /// <summary>只有真的受傷或重生後才閃爍，格檔後的短暫無敵不閃</summary>

@@ -32,6 +32,7 @@ namespace Cerberus.Player
         [SerializeField] private LayerMask groundLayer;
 
         public bool IsGrounded { get; private set; }
+        public bool IsDashing { get; private set; }
         public int FacingDirection { get; private set; } = 1;
         public Vector2 Velocity => body.linearVelocity;
 
@@ -44,6 +45,8 @@ namespace Cerberus.Player
         private float lastGroundedTime = float.NegativeInfinity;
         private float lastJumpRequestTime = float.NegativeInfinity;
         private float knockbackEndTime = float.NegativeInfinity;
+        private Vector2 dashVelocity;
+        private float dashEndTime = float.NegativeInfinity;
 
         private void Awake()
         {
@@ -80,6 +83,30 @@ namespace Cerberus.Player
             knockbackEndTime = Time.time + controlLockDuration;
         }
 
+        /// <summary>衝刺：這段時間內忽略移動輸入與重力，以固定速度前進</summary>
+        public void StartDash(Vector2 velocity, float duration)
+        {
+            dashVelocity = velocity;
+            dashEndTime = Time.time + duration;
+            knockbackEndTime = float.NegativeInfinity;
+            CancelJumpRequest();
+            IsDashing = true;
+            body.linearVelocity = velocity;
+        }
+
+        public void StopDash()
+        {
+            if (IsDashing)
+                EndDash();
+        }
+
+        private void EndDash()
+        {
+            IsDashing = false;
+            // 衝刺結束時速度降回一般跑速，不會整段慣性滑出去，也不會突然停死
+            body.linearVelocity = new Vector2(Mathf.Clamp(dashVelocity.x, -moveSpeed, moveSpeed), 0f);
+        }
+
         public void Teleport(Vector2 position)
         {
             body.position = position;
@@ -90,6 +117,19 @@ namespace Cerberus.Player
         private void FixedUpdate()
         {
             UpdateGrounded();
+
+            if (IsDashing)
+            {
+                if (Time.time < dashEndTime)
+                {
+                    body.gravityScale = 0f;
+                    body.linearVelocity = dashVelocity;
+                    return;
+                }
+
+                EndDash();
+            }
+
             ApplyHorizontalMovement();
             TryConsumeJump();
             ApplyGravity();

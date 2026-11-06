@@ -7,6 +7,7 @@ namespace Cerberus.Player
 {
     /// <summary>
     /// 處理弱攻擊、強攻擊與特殊動作的狀態切換及命中判定。
+    /// 近戰攻擊在判定期間檢查判定框；射擊攻擊在進入判定的瞬間發射子彈。
     /// 特殊動作的具體內容交給 SpecialAbility，這裡只管「現在是不是在做特殊動作」。
     /// 移動限制由 PlayerController 依這裡的狀態決定。
     /// </summary>
@@ -18,6 +19,10 @@ namespace Cerberus.Player
 
         [Header("Hit Detection")]
         [SerializeField] private LayerMask hittableLayers;
+
+        [Header("Projectiles")]
+        [Tooltip("發射的子彈放在這個物件底下，保持 Hierarchy 整齊")]
+        [SerializeField] private Transform projectileParent;
 
         public HeadConfig Head => head;
         public SpecialAbility Special => specialAbility;
@@ -38,6 +43,7 @@ namespace Cerberus.Player
         public bool SpecialAllowsTurning => specialAbility.AllowsTurning;
         public string SpecialStatusText => specialAbility.StatusText;
         public float SpecialCooldownRemaining => specialAbility.CooldownRemaining;
+        public bool IsSpecialInvincible => specialAbility.IsInvincible;
 
         /// <summary>目前階段的進度 0~1，給視覺與 HUD 使用</summary>
         public float PhaseProgress { get; private set; }
@@ -135,10 +141,11 @@ namespace Cerberus.Player
         /// <summary>目前招式作用範圍的世界座標；沒有招式時回傳 false</summary>
         public bool TryGetCurrentZone(out Vector2 center, out Vector2 size)
         {
-            if (IsAttacking)
+            // 射擊攻擊沒有判定框，命中範圍就是子彈本身
+            if (IsAttacking && CurrentAttack is MeleeAttackData melee)
             {
-                center = GetAttackZoneCenter();
-                size = CurrentAttack.hitboxSize;
+                center = GetMeleeZoneCenter(melee);
+                size = melee.hitboxSize;
                 return true;
             }
 
@@ -159,8 +166,8 @@ namespace Cerberus.Player
             float phaseDuration = GetPhaseDuration(CurrentPhase);
             PhaseProgress = phaseDuration > 0f ? Mathf.Clamp01(phaseTimer / phaseDuration) : 1f;
 
-            if (CurrentPhase == ActionPhase.Active)
-                DetectHits();
+            if (CurrentPhase == ActionPhase.Active && CurrentAttack is MeleeAttackData melee)
+                DetectMeleeHits(melee);
 
             if (phaseTimer >= phaseDuration)
                 AdvancePhase();
@@ -187,6 +194,9 @@ namespace Cerberus.Player
             CurrentPhase = phase;
             phaseTimer = 0f;
             PhaseProgress = 0f;
+
+            if (phase == ActionPhase.Active && CurrentAttack is ProjectileAttackData shot)
+                FireProjectiles(shot);
         }
 
         private void EndAction()
@@ -204,15 +214,15 @@ namespace Cerberus.Player
             _ => 0f
         };
 
-        private Vector2 GetAttackZoneCenter()
+        private Vector2 GetMeleeZoneCenter(MeleeAttackData melee)
         {
-            Vector2 offset = CurrentAttack.hitboxOffset;
+            Vector2 offset = melee.hitboxOffset;
             return (Vector2)transform.position + new Vector2(offset.x * attackFacing, offset.y);
         }
 
-        private void DetectHits()
+        private void DetectMeleeHits(MeleeAttackData melee)
         {
-            Physics2D.OverlapBox(GetAttackZoneCenter(), CurrentAttack.hitboxSize, 0f, hitFilter, overlapResults);
+            Physics2D.OverlapBox(GetMeleeZoneCenter(melee), melee.hitboxSize, 0f, hitFilter, overlapResults);
 
             foreach (Collider2D target in overlapResults)
             {
@@ -223,10 +233,21 @@ namespace Cerberus.Player
                 if (damageable == null)
                     continue;
 
-                var info = new DamageInfo(CurrentAttack.damage, transform.position, CurrentAttack.knockbackForce);
+                var info = new DamageInfo(melee.damage, transform.position, melee.knockbackForce);
 
                 if (damageable.TakeDamage(info) == DamageResult.Hit)
-                    TargetHit?.Invoke(target, CurrentAttack);
+                    TargetHit?.Invoke(target, melee);
+            }
+        }
+
+        private void FireProjectiles(ProjectileAttackData shot)
+        {
+            Vector2 muzzle = shot.GetMuzzlePosition(transform.position, attackFacing);
+
+            for (int i = 0; i < shot.projectileCount; i++)
+            {
+                Projectile projectile = Instantiate(shot.projectilePrefab, muzzle, Quaternion.identity, projectileParent);
+                projectile.Launch(shot, shot.GetDirection(i, attackFacing), hittableLayers, target => TargetHit?.Invoke(target, shot));
             }
         }
 
@@ -237,21 +258,28 @@ namespace Cerberus.Player
                 return;
 
             Vector2 origin = transform.position;
-
-            if (head.lightAttack != null)
-            {
-                Gizmos.color = new Color(1f, 0.6f, 0f);
-                Gizmos.DrawWireCube(origin + head.lightAttack.hitboxOffset, head.lightAttack.hitboxSize);
-            }
-
-            if (head.heavyAttack != null)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(origin + head.heavyAttack.hitboxOffset, head.heavyAttack.hitboxSize);
-            }
+            DrawAttackGizmo(head.lightAttack, origin, new Color(1f, 0.6f, 0f));
+            DrawAttackGizmo(head.heavyAttack, origin, Color.red);
 
             if (head.special != null)
                 head.special.DrawGizmos(origin);
+        }
+
+        private static void DrawAttackGizmo(AttackData attack, Vector2 origin, Color color)
+        {
+            Gizmos.color = color;
+
+            // 近戰畫判定框，射擊畫每一發子彈的彈道（長度 = 射程）
+            if (attack is MeleeAttackData melee)
+            {
+                Gizmos.DrawWireCube(origin + melee.hitboxOffset, melee.hitboxSize);
+            }
+            else if (attack is ProjectileAttackData shot)
+            {
+                Vector2 muzzle = shot.GetMuzzlePosition(origin, 1);
+                for (int i = 0; i < shot.projectileCount; i++)
+                    Gizmos.DrawLine(muzzle, muzzle + shot.GetDirection(i, 1) * shot.maxRange);
+            }
         }
     }
 }

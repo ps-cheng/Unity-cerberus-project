@@ -29,7 +29,7 @@ namespace Cerberus.Enemies
         [SerializeField] private float attackTriggerDistance = 1.6f;
         [Tooltip("高度差超過此值不出招，例如玩家站在頭頂的平台上")]
         [SerializeField] private float attackMaxHeightDifference = 1.5f;
-        [SerializeField] private AttackData attack;
+        [SerializeField] private MeleeAttackData attack;
 
         [Header("Windup Telegraph")]
         [SerializeField] private AttackTelegraph telegraph = new AttackTelegraph();

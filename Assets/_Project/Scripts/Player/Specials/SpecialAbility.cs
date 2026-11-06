@@ -31,6 +31,8 @@ namespace Cerberus.Player
         public bool IsActive { get; protected set; }
         public virtual bool LocksMovement => true;
         public virtual bool AllowsTurning => false;
+        /// <summary>這個當下是否無敵（例如衝刺途中），受到攻擊時直接忽略</summary>
+        public virtual bool IsInvincible => false;
 
         public bool IsOnCooldown => Time.time < cooldownEndTime;
         public float CooldownRemaining => Mathf.Max(0f, cooldownEndTime - Time.time);

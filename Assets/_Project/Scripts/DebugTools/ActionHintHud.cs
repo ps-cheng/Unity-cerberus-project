@@ -107,12 +107,13 @@ namespace Cerberus.DebugTools
         private void DrawStatusPanel()
         {
             GUILayout.BeginArea(new Rect(10, 10, 460, 300), panelStyle);
-            GUILayout.Label("<b>Controls</b>", labelStyle);
+            HeadConfig head = combat.Head;
+            GUILayout.Label($"<b>Controls</b>  ({head.displayName})", labelStyle);
             GUILayout.Label("A / D / Arrows   Move", labelStyle);
             GUILayout.Label("Space            Jump (hold = higher)", labelStyle);
-            GUILayout.Label("J / Z / LMB      Light Attack", labelStyle);
-            GUILayout.Label("K / X / RMB      Heavy Attack", labelStyle);
-            GUILayout.Label($"L / C            Special ({combat.SpecialName}: tap = parry, hold = guard)", labelStyle);
+            GUILayout.Label($"J / Z / LMB      Light: {head.lightAttack.displayName}", labelStyle);
+            GUILayout.Label($"K / X / RMB      Heavy: {head.heavyAttack.displayName}", labelStyle);
+            GUILayout.Label($"L / C            Special: {combat.SpecialName} ({head.special.controlHint})", labelStyle);
             GUILayout.Space(6);
             GUILayout.Label($"<b>HP</b>     {playerHealth.CurrentHealth} / {playerHealth.MaxHealth}{GetStatusTags()}", labelStyle);
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);

@@ -104,9 +104,9 @@ namespace Cerberus.Player
             float angle = swordRestAngle;
             float reach = 0f;
 
-            if (combat.IsAttacking)
+            // 只有近戰攻擊有刺劍動作，射擊攻擊靠身體變色表示階段
+            if (combat.IsAttacking && combat.CurrentAttack is MeleeAttackData attack)
             {
-                AttackData attack = combat.CurrentAttack;
                 float t = combat.PhaseProgress;
 
                 // 前搖：劍轉平並往後收 → 判定：快速往前刺出 → 硬直：慢慢收回原位
@@ -134,7 +134,8 @@ namespace Cerberus.Player
 
         private void UpdateShield()
         {
-            Vector2 target = combat.IsSpecialActive ? shieldBlockPosition : shieldRestPosition;
+            bool isBlocking = combat.IsSpecialActive && combat.Special is ShieldBlockSpecial;
+            Vector2 target = isBlocking ? shieldBlockPosition : shieldRestPosition;
             shieldPivot.localPosition = Vector2.Lerp(shieldPivot.localPosition, target, shieldMoveSpeed * Time.deltaTime);
 
             // 格檔成功時閃色並放大，隨時間淡回原狀
