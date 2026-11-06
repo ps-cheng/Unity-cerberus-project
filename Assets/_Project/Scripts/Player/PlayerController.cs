@@ -15,6 +15,10 @@ namespace Cerberus.Player
         private PlayerMovement movement;
         private PlayerCombat combat;
         private PlayerDamageReceiver damageReceiver;
+        private bool isInputEnabled = true;
+
+        /// <summary>關閉時角色原地站定、不接受任何操作，例如通關之後</summary>
+        public void SetInputEnabled(bool enabled) => isInputEnabled = enabled;
 
         private void Awake()
         {
@@ -26,7 +30,7 @@ namespace Cerberus.Player
 
         private void Update()
         {
-            if (damageReceiver.IsStunned)
+            if (damageReceiver.IsStunned || !isInputEnabled)
             {
                 movement.SetMoveInput(0f);
                 return;
