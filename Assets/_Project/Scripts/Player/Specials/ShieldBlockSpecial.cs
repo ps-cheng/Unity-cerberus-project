@@ -7,8 +7,8 @@ namespace Cerberus.Player
     /// 第一顆頭的特殊動作：舉起左手的盾，只對來自正面的攻擊有效。數值在 ShieldBlockData。
     /// - 完美格檔（Parry）：按下後極短時間內被打中，完全化解並讓敵人陷入硬直。
     /// - 一般格檔（Guard）：按住期間被打中，傷害依比例減少。
-    /// - 揮空懲罰：完美格檔的判定時間結束卻沒擋到攻擊，一段時間內再按也不會開啟判定（仍可一般格檔）。
-    /// 最佳打法是抓準時機按下後繼續按住：抓準了無傷，抓不準至少還有一般格檔。
+    /// - 冷卻（共用結構）：放開盾牌後進入冷卻，冷卻中完全不能格檔；完美格檔成功則這次不進冷卻。
+    /// 最佳打法是抓準時機按下後繼續按住：抓準了無傷，抓不準至少還有一般格檔。不能靠連打碰運氣。
     /// </summary>
     public class ShieldBlockSpecial : SpecialAbility
     {
@@ -16,17 +16,14 @@ namespace Cerberus.Player
 
         private int facing = 1;
         private float parryWindowStartTime = float.NegativeInfinity;
-        private float parryLockedUntil = float.NegativeInfinity;
 
-        public ShieldBlockSpecial(ShieldBlockData data, Transform owner) : base(owner)
+        public ShieldBlockSpecial(ShieldBlockData data, Transform owner) : base(data, owner)
         {
             this.data = data;
         }
 
-        public override string DisplayName => data.displayName;
         public override bool AllowsTurning => true;
         public bool IsParryWindowActive => Time.time - parryWindowStartTime <= data.parryWindow;
-        public bool IsParryLocked => Time.time < parryLockedUntil;
 
         public override string StatusText
         {
@@ -35,30 +32,23 @@ namespace Cerberus.Player
                 if (IsParryWindowActive)
                     return "Parry Window";
 
-                if (!IsActive)
-                    return string.Empty;
-
-                return IsParryLocked ? "Guard, Parry Locked" : "Guard";
+                return IsActive ? "Guard" : string.Empty;
             }
         }
 
-        public override void Tick(bool pressed, bool held, int currentFacing)
+        protected override void OnTick(bool pressed, bool held, int currentFacing)
         {
             facing = currentFacing;
 
-            if (pressed && !IsParryLocked)
-            {
+            if (pressed)
                 parryWindowStartTime = Time.time;
-                // 先假設會揮空，從判定結束起算鎖定；成功格檔時再解除
-                parryLockedUntil = Time.time + data.parryWindow + data.whiffLockoutDuration;
-            }
 
-            IsActive = held;
+            // 只有按下的那一刻能舉盾；冷卻中一直按住，冷卻結束後也不會自己舉起來
+            IsActive = held && (IsActive || pressed);
         }
 
-        public override void Cancel()
+        protected override void OnCancel()
         {
-            IsActive = false;
             parryWindowStartTime = float.NegativeInfinity;
         }
 
@@ -78,9 +68,9 @@ namespace Cerberus.Player
 
             if (IsParryWindowActive)
             {
-                // 成功就不算揮空，可以馬上接下一次完美格檔
+                // 完美格檔成功的獎勵：這次不進冷卻，可以馬上接下一次
                 parryWindowStartTime = float.NegativeInfinity;
-                parryLockedUntil = float.NegativeInfinity;
+                WaiveCooldown();
                 info.amount = 0;
                 return DamageResult.Parried;
             }

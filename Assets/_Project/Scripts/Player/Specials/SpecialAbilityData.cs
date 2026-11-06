@@ -10,6 +10,9 @@ namespace Cerberus.Player
     {
         public string displayName = "Special";
 
+        [Tooltip("特殊動作結束後要等多久才能再用，冷卻中完全不能啟動")]
+        [Min(0f)] public float cooldownDuration;
+
         public abstract SpecialAbility CreateAbility(Transform owner);
 
         /// <summary>未執行時在 Scene 視窗預覽範圍（以面向右為準）</summary>

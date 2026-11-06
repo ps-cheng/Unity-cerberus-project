@@ -117,7 +117,14 @@ namespace Cerberus.DebugTools
             GUILayout.Label($"<b>HP</b>     {playerHealth.CurrentHealth} / {playerHealth.MaxHealth}{GetStatusTags()}", labelStyle);
             GUILayout.Label($"<b>State</b>  {(movement.IsGrounded ? "Grounded" : "Airborne")}   Vel {movement.Velocity.x:0.0}, {movement.Velocity.y:0.0}", labelStyle);
             GUILayout.Label($"<b>Action</b> {GetCurrentActionText()}  {GetPhaseText()}", labelStyle);
+            GUILayout.Label($"<b>Special</b> {combat.SpecialName}  {GetCooldownText()}", labelStyle);
             GUILayout.EndArea();
+        }
+
+        private string GetCooldownText()
+        {
+            float remaining = combat.SpecialCooldownRemaining;
+            return remaining > 0f ? $"<color=orange>Cooldown {remaining:0.00}s</color>" : "<color=lime>Ready</color>";
         }
 
         private string GetStatusTags()

@@ -38,7 +38,7 @@ namespace Cerberus.Player
         [Header("Guard Feedback")]
         [Tooltip("完美格檔判定時間內盾牌的顏色，讓玩家看得出按下的時機")]
         [SerializeField] private Color parryWindowShieldColor = new Color(0.85f, 0.95f, 1f);
-        [Tooltip("揮空懲罰期間盾牌變暗，提示現在按下不會有完美格檔")]
+        [Tooltip("冷卻期間盾牌變暗，提示現在按下不能格檔")]
         [SerializeField] private Color parryLockedShieldColor = new Color(0.25f, 0.3f, 0.4f);
         [SerializeField] private Color guardFlashColor = Color.white;
         [SerializeField] private Color parryFlashColor = new Color(1f, 0.9f, 0.2f);
@@ -159,7 +159,7 @@ namespace Cerberus.Player
             if (shieldBlock.IsParryWindowActive)
                 return parryWindowShieldColor;
 
-            return shieldBlock.IsParryLocked ? parryLockedShieldColor : shieldBaseColor;
+            return shieldBlock.IsOnCooldown ? parryLockedShieldColor : shieldBaseColor;
         }
 
         private Color GetBodyColor()

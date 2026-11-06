@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Head1_ShieldBlock
   m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Player.ShieldBlockData
   displayName: Block
+  cooldownDuration: 0.8
   zoneOffset: {x: 0.6, y: 0.2}
   zoneSize: {x: 0.4, y: 1.6}
   guardDamageReduction: 0.7
   parryWindow: 0.133
-  whiffLockoutDuration: 0.5

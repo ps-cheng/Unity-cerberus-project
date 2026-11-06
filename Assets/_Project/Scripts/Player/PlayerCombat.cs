@@ -37,6 +37,7 @@ namespace Cerberus.Player
         public bool SpecialLocksMovement => specialAbility.LocksMovement;
         public bool SpecialAllowsTurning => specialAbility.AllowsTurning;
         public string SpecialStatusText => specialAbility.StatusText;
+        public float SpecialCooldownRemaining => specialAbility.CooldownRemaining;
 
         /// <summary>目前階段的進度 0~1，給視覺與 HUD 使用</summary>
         public float PhaseProgress { get; private set; }
@@ -46,6 +47,8 @@ namespace Cerberus.Player
         public event Action<Collider2D, AttackData> TargetHit;
 
         private SpecialAbility specialAbility;
+        // 每顆頭的特殊動作只建立一次並保留，切換頭時執行期狀態（冷卻）不會重置，會在背景繼續倒數
+        private readonly Dictionary<SpecialAbilityData, SpecialAbility> specialInstances = new Dictionary<SpecialAbilityData, SpecialAbility>();
         private int attackFacing = 1;
         private float phaseTimer;
         private ContactFilter2D hitFilter;
@@ -59,7 +62,18 @@ namespace Cerberus.Player
             hitFilter.SetLayerMask(hittableLayers);
             hitFilter.useTriggers = true;
 
-            specialAbility = head.special.CreateAbility(transform);
+            specialAbility = GetOrCreateSpecial(head.special);
+        }
+
+        private SpecialAbility GetOrCreateSpecial(SpecialAbilityData data)
+        {
+            if (!specialInstances.TryGetValue(data, out SpecialAbility ability))
+            {
+                ability = data.CreateAbility(transform);
+                specialInstances.Add(data, ability);
+            }
+
+            return ability;
         }
 
         public bool TryStartAttack(CombatAction attackType, int facing)

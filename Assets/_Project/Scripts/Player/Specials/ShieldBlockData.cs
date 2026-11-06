@@ -2,7 +2,10 @@ using UnityEngine;
 
 namespace Cerberus.Player
 {
-    /// <summary>格檔的數值設定，行為在 ShieldBlockSpecial。</summary>
+    /// <summary>
+    /// 格檔的數值設定，行為在 ShieldBlockSpecial。
+    /// 共用的 cooldownDuration 從放開盾牌起算，冷卻中完全不能格檔。
+    /// </summary>
     [CreateAssetMenu(fileName = "NewShieldBlock", menuName = "Cerberus/Specials/Shield Block")]
     public class ShieldBlockData : SpecialAbilityData
     {
@@ -17,8 +20,6 @@ namespace Cerberus.Player
         [Header("Parry (按下的瞬間)")]
         [Tooltip("按下後這段時間內被打中算完美格檔（0.133 秒 ≈ 60fps 的 8 幀）")]
         [Min(0f)] public float parryWindow = 0.133f;
-        [Tooltip("判定時間結束仍沒擋到攻擊時，這段時間內按下不會再開啟完美格檔判定")]
-        [Min(0f)] public float whiffLockoutDuration = 0.5f;
 
         public override SpecialAbility CreateAbility(Transform owner) => new ShieldBlockSpecial(this, owner);
 
