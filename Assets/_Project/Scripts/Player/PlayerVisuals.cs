@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Cerberus.Player
 {
     /// <summary>
-    /// 用幾何圖形的位移與旋轉代替動畫：翻轉面向、刺劍、舉盾、開槍後座力、依招式階段變色、受傷閃爍。
-    /// 換頭時切換手上的裝備（劍盾 / 槍）與身體顏色。
+    /// 用幾何圖形的位移與旋轉代替動畫：翻轉面向、刺劍、舉盾、開槍後座力、爪擊、依招式階段變色、變身泛紅、受傷閃爍。
+    /// 換頭時切換手上的裝備（劍盾 / 槍 / 爪子）與身體顏色。
     /// 之後換成正式美術時，整支替換成 Animator 驅動即可，不影響遊戲邏輯。
     /// </summary>
     public class PlayerVisuals : MonoBehaviour
@@ -29,7 +29,7 @@ namespace Cerberus.Player
         [SerializeField] private Transform swordPivot;
         [SerializeField] private Transform shieldPivot;
         [SerializeField] private Transform gunPivot;
-        [SerializeField] private Transform cleaverPivot;
+        [SerializeField] private Transform clawPivot;
 
         [Header("Head Gear")]
         [SerializeField] private HeadGear[] headGears;
@@ -49,12 +49,14 @@ namespace Cerberus.Player
         [Tooltip("開槍瞬間槍口上揚的角度")]
         [SerializeField] private float gunRecoilAngle = 12f;
 
-        [Header("Cleaver Pose (角度 0 = 刀朝上, 負值 = 往前倒)")]
-        [SerializeField] private float cleaverRestAngle = -35f;
-        [Tooltip("前搖時把刀舉到頭後方的角度")]
-        [SerializeField] private float cleaverRaiseAngle = 55f;
-        [Tooltip("判定時往前下劈到的角度")]
-        [SerializeField] private float cleaverSwingAngle = -125f;
+        [Header("Claw Pose (角度 0 = 爪子朝前, 正值 = 往上舉)")]
+        [SerializeField] private float clawRestAngle = -15f;
+        [Tooltip("前搖時把爪子舉高往後拉的角度")]
+        [SerializeField] private float clawRaiseAngle = 75f;
+        [Tooltip("判定時往前下抓到的角度")]
+        [SerializeField] private float clawSwipeAngle = -70f;
+        [Tooltip("前搖時爪子往後拉、判定時往前探的距離")]
+        [SerializeField] private float clawReach = 0.25f;
 
         [Header("Transformation")]
         [Tooltip("變身中身體泛紅的顏色，會在原本顏色與此顏色之間脈動")]
@@ -84,6 +86,7 @@ namespace Cerberus.Player
 
         private Vector2 swordRestPosition;
         private Vector2 gunRestPosition;
+        private Vector2 clawRestPosition;
         private SpriteRenderer[] visualRenderers;
         private SpriteRenderer shieldRenderer;
         private Color shieldBaseColor;
@@ -96,6 +99,7 @@ namespace Cerberus.Player
         {
             swordRestPosition = swordPivot.localPosition;
             gunRestPosition = gunPivot.localPosition;
+            clawRestPosition = clawPivot.localPosition;
             // 包含目前隱藏的裝備，換頭後受傷閃爍才會套用到新裝備上
             visualRenderers = visualRoot.GetComponentsInChildren<SpriteRenderer>(true);
             shieldRenderer = shieldPivot.GetComponentInChildren<SpriteRenderer>(true);
@@ -143,7 +147,7 @@ namespace Cerberus.Player
             UpdateSword();
             UpdateShield();
             UpdateGun();
-            UpdateCleaver();
+            UpdateClaw();
             bodyRenderer.color = GetBodyColor();
             UpdateVisibility();
         }
@@ -230,26 +234,37 @@ namespace Cerberus.Player
             gunPivot.localPosition = gunRestPosition + new Vector2(reach, 0f);
         }
 
-        private void UpdateCleaver()
+        private void UpdateClaw()
         {
-            float angle = cleaverRestAngle;
+            float angle = clawRestAngle;
+            float reach = 0f;
 
-            // 前搖：把刀舉到頭後 → 判定：快速往前下劈 → 硬直：慢慢收回
+            // 前搖：爪子舉高往後拉 → 判定：往前下方抓過去 → 硬直：慢慢收回
             if (combat.IsAttacking && combat.CurrentAttack is MeleeAttackData)
             {
                 float t = combat.PhaseProgress;
 
-                angle = combat.CurrentPhase switch
+                switch (combat.CurrentPhase)
                 {
-                    ActionPhase.Startup => Mathf.Lerp(cleaverRestAngle, cleaverRaiseAngle, t),
-                    // 開根號讓前段揮得快，有「劈下去」的重量感
-                    ActionPhase.Active => Mathf.Lerp(cleaverRaiseAngle, cleaverSwingAngle, Mathf.Sqrt(t)),
-                    ActionPhase.Recovery => Mathf.Lerp(cleaverSwingAngle, cleaverRestAngle, t),
-                    _ => cleaverRestAngle
-                };
+                    case ActionPhase.Startup:
+                        angle = Mathf.Lerp(clawRestAngle, clawRaiseAngle, t);
+                        reach = Mathf.Lerp(0f, -clawReach, t);
+                        break;
+                    case ActionPhase.Active:
+                        // 開根號讓前段抓得快，有「撕下去」的重量感
+                        float swipe = Mathf.Sqrt(t);
+                        angle = Mathf.Lerp(clawRaiseAngle, clawSwipeAngle, swipe);
+                        reach = Mathf.Lerp(-clawReach, clawReach, swipe);
+                        break;
+                    case ActionPhase.Recovery:
+                        angle = Mathf.Lerp(clawSwipeAngle, clawRestAngle, t);
+                        reach = Mathf.Lerp(clawReach, 0f, t);
+                        break;
+                }
             }
 
-            cleaverPivot.localRotation = Quaternion.Euler(0f, 0f, angle);
+            clawPivot.localRotation = Quaternion.Euler(0f, 0f, angle);
+            clawPivot.localPosition = clawRestPosition + new Vector2(reach, 0f);
         }
 
         private Color GetShieldColor()
