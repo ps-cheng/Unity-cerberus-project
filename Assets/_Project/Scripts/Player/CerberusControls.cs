@@ -400,7 +400,7 @@ namespace Cerberus.Player
                 {
                     ""name"": """",
                     ""id"": ""9364c740-dc2f-42e7-aacb-62c4c44be214"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
@@ -422,7 +422,7 @@ namespace Cerberus.Player
                 {
                     ""name"": """",
                     ""id"": ""50e43a28-1fb3-4679-a877-7fd3c64e9b43"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",

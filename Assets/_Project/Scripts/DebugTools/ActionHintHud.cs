@@ -121,7 +121,7 @@ namespace Cerberus.DebugTools
             GUILayout.BeginVertical(panelStyle);
             HeadConfig head = combat.Head;
             GUILayout.Label($"<b>Controls</b>  ({head.displayName})", labelStyle);
-            GUILayout.Label("Q / E            Switch Head", labelStyle);
+            GUILayout.Label("Up / Down        Switch Head", labelStyle);
             GUILayout.Label("A / D / Arrows   Move", labelStyle);
             GUILayout.Label("Space            Jump (hold = higher)", labelStyle);
             GUILayout.Label($"J / Z / LMB      Light: {head.lightAttack.displayName}", labelStyle);

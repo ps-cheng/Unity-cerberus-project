@@ -14,7 +14,7 @@ namespace Cerberus.Player
     public class PlayerCombat : MonoBehaviour, ICombatZoneSource
     {
         [Header("Heads")]
-        [Tooltip("可切換的頭，依序為 1、2、3 號，Q / E 循環切換。每顆頭是一組招式（弱攻擊、強攻擊、特殊動作）")]
+        [Tooltip("可切換的頭，依序為 1、2、3 號，方向鍵上 / 下循環切換。每顆頭是一組招式（弱攻擊、強攻擊、特殊動作）")]
         [SerializeField] private HeadConfig[] heads;
         [SerializeField, Min(0)] private int startingHeadIndex;
 
