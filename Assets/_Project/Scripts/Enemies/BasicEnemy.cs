@@ -165,15 +165,8 @@ namespace Cerberus.Enemies
             if (hasHitThisAttack)
                 return;
 
-            Collider2D hit = Physics2D.OverlapBox(GetAttackZoneCenter(), attack.hitboxSize, 0f, TargetLayers);
-            if (hit == null)
-                return;
-
-            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
-            if (damageable == null)
-                return;
-
-            DamageResult result = damageable.TakeDamage(new DamageInfo(attack.damage, transform.position, attack.knockbackForce));
+            var info = new DamageInfo(attack.damage, transform.position, attack.knockbackForce);
+            DamageResult result = HitTargetInBox(GetAttackZoneCenter(), attack.hitboxSize, info);
 
             // 目標無敵時（Ignored）不算命中，判定期間內仍可再嘗試
             if (result != DamageResult.Ignored)

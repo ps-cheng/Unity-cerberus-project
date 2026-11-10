@@ -1288,6 +1288,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  dashPassThroughLayers:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &8493786105733961407
 MonoBehaviour:
   m_ObjectHideFlags: 0

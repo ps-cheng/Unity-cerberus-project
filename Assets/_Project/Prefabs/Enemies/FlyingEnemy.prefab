@@ -194,6 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1344167986057502493}
   - component: {fileID: 7556056623671572751}
+  - component: {fileID: 7623831766292120744}
   m_Layer: 10
   m_Name: LaserLine
   m_TagString: Untagged
@@ -335,6 +336,45 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &7623831766292120744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870646212595536688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4c36e776b679448b971ab92499fbcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Enemies.LaserEmitter
+  firePoint: {fileID: 29303051299745167}
+  laserLine: {fileID: 7556056623671572751}
+  aimDuration: 0.6
+  chargeDuration: 0.6
+  beamDuration: 0.1
+  laserRange: 12
+  laserDamage: 10
+  laserKnockback: 6
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  reflectedDamageMultiplier: 2
+  reflectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
+  telegraph:
+    warningColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+    blinkStartFrequency: 4
+    blinkEndFrequency: 14
+    cueDuration: 0.25
+    cueColor: {r: 1, g: 1, b: 1, a: 1}
+  aimColor: {r: 1, g: 0.15, b: 0.2, a: 1}
+  aimWidth: 0.03
+  cueWidth: 0.06
+  beamWidth: 0.3
+  beamColor: {r: 1, g: 0.35, b: 0.4, a: 1}
 --- !u!1 &2728538916931162735
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,6 +413,7 @@ Transform:
   - {fileID: 29303051299745167}
   - {fileID: 3194109095389504348}
   - {fileID: 1344167986057502493}
+  - {fileID: 297178850959013727}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2833452092441939589
@@ -471,39 +512,18 @@ MonoBehaviour:
   hurtStunDuration: 0.25
   parriedStaggerDuration: 1.2
   staggerColor: {r: 0.55, g: 0.75, b: 1, a: 1}
+  hitFlashDuration: 0.08
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
   deathLingerDuration: 0.45
   deathBlinkFrequency: 12
   visualRoot: {fileID: 5971779224764007150}
   bodyRenderer: {fileID: 6165138154806091315}
   patrolDistance: 2.5
   patrolSpeed: 2
-  firePoint: {fileID: 29303051299745167}
-  aimDuration: 0.6
-  chargeDuration: 0.6
-  beamDuration: 0.1
+  laser: {fileID: 7623831766292120744}
   recoverDuration: 0.6
   fireCooldown: 1.5
-  laserRange: 12
-  laserDamage: 10
-  laserKnockback: 6
-  obstacleLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  reflectedDamageMultiplier: 2
-  reflectedColor: {r: 0.4, g: 0.9, b: 1, a: 1}
-  telegraph:
-    warningColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-    blinkStartFrequency: 4
-    blinkEndFrequency: 14
-    cueDuration: 0.25
-    cueColor: {r: 1, g: 1, b: 1, a: 1}
   chargeSwellScale: {x: 1.35, y: 1.35}
-  laserLine: {fileID: 7556056623671572751}
-  aimColor: {r: 1, g: 0.15, b: 0.2, a: 1}
-  aimWidth: 0.03
-  cueWidth: 0.06
-  beamWidth: 0.3
-  beamColor: {r: 1, g: 0.35, b: 0.4, a: 1}
 --- !u!114 &3176989109366916073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -928,6 +948,74 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1 &8918289127727884523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 297178850959013727}
+  - component: {fileID: 8948928057124872314}
+  m_Layer: 10
+  m_Name: BodyBlocker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &297178850959013727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8918289127727884523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3183618980744670146}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &8948928057124872314
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8918289127727884523}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.34
 --- !u!1 &9075193404655916092
 GameObject:
   m_ObjectHideFlags: 0

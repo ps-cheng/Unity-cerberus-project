@@ -675,7 +675,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 500
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 3
@@ -769,6 +769,8 @@ MonoBehaviour:
   hurtStunDuration: 0.4
   parriedStaggerDuration: 1.2
   staggerColor: {r: 0.55, g: 0.75, b: 1, a: 1}
+  hitFlashDuration: 0.08
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
   deathLingerDuration: 0.45
   deathBlinkFrequency: 12
   visualRoot: {fileID: 8170315328773181273}

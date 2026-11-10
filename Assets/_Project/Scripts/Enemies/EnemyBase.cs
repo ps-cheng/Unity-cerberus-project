@@ -21,6 +21,9 @@ namespace Cerberus.Enemies
         [Tooltip("攻擊被完美格檔後的硬直，也就是玩家反擊的機會")]
         [SerializeField] private float parriedStaggerDuration = 1.2f;
         [SerializeField] private Color staggerColor = new Color(0.55f, 0.75f, 1f);
+        [Tooltip("受擊時身體閃白的時間")]
+        [SerializeField] private float hitFlashDuration = 0.08f;
+        [SerializeField] private Color hitFlashColor = Color.white;
 
         [Header("Death")]
         [Tooltip("死亡後留在場上閃爍的時間，讓玩家看清楚最後一擊，之後才刪除")]
@@ -67,6 +70,7 @@ namespace Cerberus.Enemies
         private float stunnedUntil;
         private float staggeredUntil;
         private float diedAt;
+        private float hitFlashUntil;
 
         protected virtual void Awake()
         {
@@ -94,12 +98,21 @@ namespace Cerberus.Enemies
             if (Health.IsDead)
                 return DamageResult.Ignored;
 
+            // 防禦姿態（例如 Boss 舉盾）可以在扣血前擋下這一下
+            DamageResult defense = ResolveIncomingHit(info);
+            if (defense != DamageResult.Hit)
+                return defense;
+
+            hitFlashUntil = Time.time + hitFlashDuration;
             Health.ApplyDamage(info.amount);
             // 取較長者：被格檔硬直中挨打，不會因此縮短硬直
             stunnedUntil = Mathf.Max(stunnedUntil, Time.time + hurtStunDuration);
             OnHurt(info);
             return DamageResult.Hit;
         }
+
+        /// <summary>扣血前的防禦判定，回傳 Hit 以外的結果就不扣血</summary>
+        protected virtual DamageResult ResolveIncomingHit(DamageInfo info) => DamageResult.Hit;
 
         /// <summary>受擊後的個別反應（擊退、打斷招式）</summary>
         protected virtual void OnHurt(DamageInfo info) { }
@@ -110,7 +123,13 @@ namespace Cerberus.Enemies
             stunnedUntil = staggeredUntil = Time.time + parriedStaggerDuration;
         }
 
-        private Color GetCurrentColor() => IsStaggered ? staggerColor : GetBodyColor();
+        private Color GetCurrentColor()
+        {
+            if (Time.time < hitFlashUntil)
+                return hitFlashColor;
+
+            return IsStaggered ? staggerColor : GetBodyColor();
+        }
 
         /// <summary>依目前狀態決定身體顏色，用來預告攻擊</summary>
         protected virtual Color GetBodyColor() => BaseColor;
@@ -129,8 +148,12 @@ namespace Cerberus.Enemies
             foreach (ContactDamageDealer dealer in GetComponentsInChildren<ContactDamageDealer>())
                 dealer.enabled = false;
 
+            OnDied();
             Destroy(gameObject, deathLingerDuration);
         }
+
+        /// <summary>死亡瞬間呼叫，子類別用來收掉進行中的攻擊</summary>
+        protected virtual void OnDied() { }
 
         private void UpdateDeathBlink()
         {
@@ -144,6 +167,19 @@ namespace Cerberus.Enemies
                 return;
 
             FacingDirection = direction > 0f ? 1 : -1;
+        }
+
+        /// <summary>
+        /// 近戰判定：範圍內有目標就造成一次傷害。沒碰到目標回傳 Ignored。
+        /// </summary>
+        protected DamageResult HitTargetInBox(Vector2 center, Vector2 size, DamageInfo info)
+        {
+            Collider2D hit = Physics2D.OverlapBox(center, size, 0f, targetLayers);
+            if (hit == null)
+                return DamageResult.Ignored;
+
+            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+            return damageable != null ? damageable.TakeDamage(info) : DamageResult.Ignored;
         }
 
         protected float GetDirectionToTarget() => Mathf.Sign(Target.position.x - transform.position.x);

@@ -31,6 +31,10 @@ namespace Cerberus.Player
         [SerializeField] private Vector2 groundCheckSize = new Vector2(0.7f, 0.1f);
         [SerializeField] private LayerMask groundLayer;
 
+        [Header("Dash")]
+        [Tooltip("衝刺期間可以穿過的 Layer（敵人身體），讓衝刺能繞到敵人背後")]
+        [SerializeField] private LayerMask dashPassThroughLayers;
+
         public bool IsGrounded { get; private set; }
         public bool IsDashing { get; private set; }
         public int FacingDirection { get; private set; } = 1;
@@ -39,6 +43,9 @@ namespace Cerberus.Player
         public event Action Jumped;
 
         private Rigidbody2D body;
+        private Collider2D bodyCollider;
+        private ContactFilter2D passThroughFilter;
+        private readonly Collider2D[] passThroughResults = new Collider2D[1];
         private float baseGravityScale;
         private float moveInput;
         private bool isJumpHeld;
@@ -51,7 +58,10 @@ namespace Cerberus.Player
         private void Awake()
         {
             body = GetComponent<Rigidbody2D>();
+            bodyCollider = GetComponent<Collider2D>();
             baseGravityScale = body.gravityScale;
+            passThroughFilter = new ContactFilter2D();
+            passThroughFilter.SetLayerMask(dashPassThroughLayers);
         }
 
         public void SetMoveInput(float input) => moveInput = Mathf.Clamp(input, -1f, 1f);
@@ -92,6 +102,7 @@ namespace Cerberus.Player
             CancelJumpRequest();
             IsDashing = true;
             body.linearVelocity = velocity;
+            body.excludeLayers = dashPassThroughLayers;
         }
 
         public void StopDash()
@@ -130,9 +141,20 @@ namespace Cerberus.Player
                 EndDash();
             }
 
+            RestoreCollisionAfterDash();
             ApplyHorizontalMovement();
             TryConsumeJump();
             ApplyGravity();
+        }
+
+        /// <summary>衝刺結束時若還卡在敵人身體裡，等完全離開後才恢復碰撞，避免被物理硬擠出去</summary>
+        private void RestoreCollisionAfterDash()
+        {
+            if (body.excludeLayers == 0)
+                return;
+
+            if (bodyCollider.Overlap(passThroughFilter, passThroughResults) == 0)
+                body.excludeLayers = 0;
         }
 
         private void UpdateGrounded()

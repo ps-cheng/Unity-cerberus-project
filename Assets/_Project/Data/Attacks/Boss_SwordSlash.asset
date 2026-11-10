@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030bcd5e8a1bfa047b4ab1dfaf75a2d3, type: 3}
+  m_Name: Boss_SwordSlash
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Combat.MeleeAttackData
+  displayName: Boss Sword Slash
+  startupDuration: 0.8
+  activeDuration: 0.15
+  recoveryDuration: 0.7
+  damage: 20
+  knockbackForce: 10
+  hitFeedback:
+    hitStopDuration: 0.04
+    shakeAmplitude: 0.06
+    shakeDuration: 0.12
+  hitboxOffset: {x: 2.2, y: -0.5}
+  hitboxSize: {x: 2.8, y: 3}
+  windupDistance: 0.2
+  thrustDistance: 0.6
