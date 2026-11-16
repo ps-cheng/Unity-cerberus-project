@@ -26,6 +26,8 @@ namespace Cerberus.Player
         [Tooltip("所有外觀物件的父節點，翻轉面向時只翻這層")]
         [SerializeField] private Transform visualRoot;
         [SerializeField] private SpriteRenderer bodyRenderer;
+        [Tooltip("像素動畫的 SpriteRenderer（由 PlayerAnimator 驅動），只套用變身泛紅")]
+        [SerializeField] private SpriteRenderer artRenderer;
         [SerializeField] private Transform swordPivot;
         [SerializeField] private Transform shieldPivot;
         [SerializeField] private Transform gunPivot;
@@ -151,6 +153,8 @@ namespace Cerberus.Player
             UpdateGun();
             UpdateClaw();
             bodyRenderer.color = GetBodyColor();
+            if (artRenderer != null)
+                artRenderer.color = GetArtColor();
             UpdateVisibility();
         }
 
@@ -297,14 +301,24 @@ namespace Cerberus.Player
             };
         }
 
+        // 像素圖不依招式階段變色（交給動畫表現），只保留變身的泛紅脈動
+        private Color GetArtColor()
+        {
+            if (!(combat.Special is TransformationSpecial { IsActive: true }))
+                return Color.white;
+
+            return Color.Lerp(Color.white, transformedTint, Mathf.Lerp(0.25f, 0.5f, GetTransformedPulse()));
+        }
+
+        private float GetTransformedPulse() => 0.5f + 0.5f * Mathf.Sin(Time.time * transformedPulseFrequency * Mathf.PI * 2f);
+
         private Color GetIdleBodyColor()
         {
             Color headColor = combat.Head.bodyColor;
             if (!(combat.Special is TransformationSpecial { IsActive: true }))
                 return headColor;
 
-            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * transformedPulseFrequency * Mathf.PI * 2f);
-            return Color.Lerp(headColor, transformedTint, Mathf.Lerp(0.45f, 0.75f, pulse));
+            return Color.Lerp(headColor, transformedTint, Mathf.Lerp(0.45f, 0.75f, GetTransformedPulse()));
         }
 
         private void UpdateVisibility()

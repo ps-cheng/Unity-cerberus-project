@@ -38,6 +38,8 @@ namespace Cerberus.Player
         public bool IsGrounded { get; private set; }
         public bool IsDashing { get; private set; }
         public int FacingDirection { get; private set; } = 1;
+        /// <summary>地面上的最高水平速度，給動畫換算走路播放速度</summary>
+        public float MoveSpeed => moveSpeed;
         public Vector2 Velocity => body.linearVelocity;
 
         public event Action Jumped;

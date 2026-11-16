@@ -17,3 +17,6 @@ MonoBehaviour:
   heavyAttack: {fileID: 11400000, guid: 171046d31e5985045a5193fca3e9ad65, type: 2}
   special: {fileID: 11400000, guid: 8ae8ebcf1be64fa47bc3aa8f9e456a10, type: 2}
   bodyColor: {r: 0.374, g: 0.2176, b: 0.1394, a: 1}
+  animatorOverride: {fileID: 22100000, guid: edaecbe8bd9735a4cb398eb9d6d2aed0, type: 2}
+  idleCycleDuration: 1
+  walkAnimationSpeedMultiplier: 1
