@@ -982,7 +982,7 @@ Transform:
   m_GameObject: {fileID: 3719518413483095248}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.10666667, y: -0.10666667, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1037,7 +1037,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -6951649808679138250, guid: 7c6efe81397352146a4bfd5948d80b23, type: 3}
+  m_Sprite: {fileID: -1793570528, guid: e6d30e50c37dc294586019ca8ae6319a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1490,7 +1490,6 @@ MonoBehaviour:
   damageReceiver: {fileID: 7600912469947864983}
   visualRoot: {fileID: 3773074722387584651}
   bodyRenderer: {fileID: 4420729154825973527}
-  artRenderer: {fileID: 3474586335862525630}
   swordPivot: {fileID: 8699949210722977356}
   shieldPivot: {fileID: 7774836099846485204}
   gunPivot: {fileID: 6896747115379722315}
@@ -1579,10 +1578,21 @@ MonoBehaviour:
   - {fileID: 3471799788215530895}
   - {fileID: 6691588634926900599}
   - {fileID: 1382594541144148898}
+  - {fileID: 1658417397375689046}
+  - {fileID: 6825609375070463782}
+  - {fileID: 8632079071692163495}
+  - {fileID: 4045816591841433091}
+  - {fileID: 922478508514993680}
+  - {fileID: 8102386162490202679}
+  - {fileID: 76728040395548409}
   baseIdleClip: {fileID: 7400000, guid: 5c77e88ee6955e147b4aabd3e4739ca3, type: 2}
   baseLightAttackClip: {fileID: 7400000, guid: 9ba3b588228d80e4e815bd0ee0fce0b0, type: 2}
   baseHeavyAttackClip: {fileID: 7400000, guid: 7fd923840c4aa36419cc18feb753a496, type: 2}
+  baseJumpClip: {fileID: 7400000, guid: fb03c5f5488fa9044a0c63d0c46b91ed, type: 2}
+  baseSpecialClip: {fileID: 7400000, guid: 2b59ee51b9b20f440ae5143327e073fa, type: 2}
   walkSpeedThreshold: 0.1
+  takeoffDuration: 0.06
+  landingDuration: 0.1
 --- !u!1 &5355313924366488003
 GameObject:
   m_ObjectHideFlags: 0

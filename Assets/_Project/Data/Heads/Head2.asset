@@ -18,5 +18,7 @@ MonoBehaviour:
   special: {fileID: 11400000, guid: 797bbec703da4af4f913821bec94c47e, type: 2}
   bodyColor: {r: 0.77, g: 0.55999994, b: 0.45499995, a: 1}
   animatorOverride: {fileID: 22100000, guid: be8db32ad4e6042479a12d0f1c61af59, type: 2}
-  idleCycleDuration: 1
+  idleCycleDuration: 0
   walkAnimationSpeedMultiplier: 1
+  specialHoldFrame: -1
+  transformedSprites: []
