@@ -35,6 +35,10 @@ namespace Cerberus.Level
         [Header("Arena")]
         [Tooltip("Boss 戰期間鏡頭的範圍（世界座標）")]
         [SerializeField] private Rect arenaCameraBounds = new Rect(110f, -1.5f, 32f, 14f);
+        [Tooltip("Boss 戰期間鏡頭拉遠到這個大小（orthographic size），讓塔洛斯和雷射都在畫面內。0 = 不拉遠")]
+        [SerializeField] private float arenaOrthographicSize = 8f;
+        [Tooltip("鏡頭拉遠／拉回需要的秒數")]
+        [SerializeField] private float zoomDuration = 1f;
 
         [Header("Intro")]
         [SerializeField] private string broadcastMessage = "赫托斯重工 保全單位 塔洛斯，啟動。";
@@ -51,12 +55,24 @@ namespace Cerberus.Level
         private State state = State.Waiting;
         private GameObject bossInstance;
         private PlayerController playerController;
+        private Camera viewCamera;
+        private float defaultOrthographicSize;
+        private float targetOrthographicSize;
 
         private void Awake()
         {
             bossTemplate.SetActive(false);
             reward.SetActive(false);
             playerController = player.GetComponent<PlayerController>();
+            viewCamera = Camera.main;
+            defaultOrthographicSize = targetOrthographicSize = viewCamera.orthographicSize;
+        }
+
+        private void Update()
+        {
+            // 鏡頭大小慢慢靠近目標；CameraFollow 每幀依目前大小重新計算邊界
+            float speed = Mathf.Abs(arenaOrthographicSize - defaultOrthographicSize) / Mathf.Max(zoomDuration, 0.01f);
+            viewCamera.orthographicSize = Mathf.MoveTowards(viewCamera.orthographicSize, targetOrthographicSize, speed * Time.deltaTime);
         }
 
         private void OnEnable()
@@ -82,6 +98,8 @@ namespace Cerberus.Level
             state = State.Intro;
             entranceGate.CloseAndLock();
             cameraFollow.SetBounds(arenaCameraBounds);
+            if (arenaOrthographicSize > 0f)
+                targetOrthographicSize = arenaOrthographicSize;
 
             // 廣播期間玩家不能動，看完再開打
             playerController.SetInputEnabled(false);
@@ -150,6 +168,7 @@ namespace Cerberus.Level
             state = State.Waiting;
             entranceGate.ResetGate();
             cameraFollow.ResetBounds();
+            targetOrthographicSize = defaultOrthographicSize;
         }
 
         protected override Color GizmoColor => new Color(1f, 0.48f, 0.1f, 0.7f);

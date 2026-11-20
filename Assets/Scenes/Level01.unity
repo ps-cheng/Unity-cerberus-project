@@ -6270,9 +6270,11 @@ MonoBehaviour:
   arenaCameraBounds:
     serializedVersion: 2
     x: 111.4
-    y: -1.5
+    y: -2.5
     width: 32.1
-    height: 14
+    height: 16
+  arenaOrthographicSize: 8
+  zoomDuration: 1
   broadcastMessage: "\u8D6B\u6258\u65AF\u91CD\u5DE5 \u4FDD\u5168\u55AE\u4F4D \u5854\u6D1B\u65AF\uFF0C\u555F\u52D5\u3002"
   broadcastHoldDuration: 2.5
   dropHeight: 7

@@ -276,10 +276,76 @@ Boss 本身的程式和數值都沒動。場景裡的 Boss 是停用的樣板，
 - **除錯外框**：Player 身上的除錯判定框（`CombatZoneVisualizer`）在遊戲中會畫出紅色方塊，所以場景裡的除錯顯示元件全部停用。要除錯時在 Inspector 打開。
 - **伯特的槍口位置**：判定上的槍口位置比圖上的槍低。主角圖放大 1.75 倍造成，跟「主角大小」那題是同一件事。火光只往上移了 0.15，太多會跟子彈出現的位置對不上。
 
+## 階段 6：收尾 ✅
+
+### 跑一遍（Play Mode）
+- 開始畫面 → 文字卡 → 街道 → 重生點 → 保管庫 → 塔洛斯 → 硬幣 → 結束畫面 → 重新開始。每一段都在前面的階段測過，這次補測塔洛斯戰。
+- **鏡頭修正**：
+  - 保管庫寬 32 單位，原本的鏡頭只看得到 20 單位，塔洛斯和觸手雷射會在畫面外。
+  - 現在 Boss 戰開始時鏡頭會花 1 秒拉遠到 orthographic size 8（約 27 單位寬），重生後拉回。
+  - 數值在 `BossArena` 的 `BossEncounter`（`arenaOrthographicSize`、`zoomDuration`）。
+- **補截圖確認**：
+  - 塔洛斯觸手雷射的蓄力光芒；
+  - 露出腳踝弱點時的閃光；
+  - 拉遠後塔洛斯在畫面內。
+- **沒有真的用手操作從頭玩到尾**：測試是用程式瞬移和直接扣血完成的。手感、難度、實際遊玩時間（目標 2～4 分鐘）需要你實際玩一次確認。
+
+### 打包
+- Build Settings 只啟用 `Level01`。`SampleScene`、`Level02` 保留在清單但停用。
+- **Windows 64 位元**（Mono）：`Builds/Cerberus-Demo/Cerberus.exe`。
+  - 約 189 MB，`Builds/` 不進版本控制。
+  - 給別人時不要附上 `Cerberus_BackUpThisFolder_ButDontShipItWithYourGame` 資料夾。
+- **打包後執行測試**：視窗模式開啟 12 秒，log 沒有任何例外。
+  - log 裡有 URP 後製 shader 被剔除的警告（Bloom 等）。這個專案的攝影機沒有開後製，不影響畫面。
+- **打包過程的狀況**：
+  - 打包時 Unity 跳出「場景有未儲存的變更」對話框，卡住約 12 分鐘。內容是我自己的場景修改，我按了 Save 繼續。
+  - 打包會自動改寫 `UniversalRP.asset`、`UniversalRenderPipelineGlobalSettings.asset`（shader 篩選資料），並把 `UnityConnectSettings` 的 Unity 服務開關從 0 改成 1。這三個檔案我還原成原本的內容，沒有 commit。之後在編輯器裡再打包時，Unity 可能會再改一次。
+
+### README
+`README.md` 草稿保留原本的兩行標題，補上以下內容：
+- demo 內容、操作表、執行和打包方式；
+- 專案結構、調整數值的地方；
+- 美術和音效流程、已知問題、字型授權。
+
+---
+
+## 最終報告
+
+### 完成
+- **角色**：sprite-gen 圖集匯入工具。三顆頭和洛斯變身版的動畫都接上了。
+- **美術**：生圖 14 次（上限 20），全部成功。包括三層背景、平台、保管庫、敵人、塔洛斯零件、道具。
+- **關卡**：第一關從起點到結束畫面完整可玩。
+  - 教學招牌、重生點、保管庫大門、系統廣播、塔洛斯登場、Boss 戰重來、硬幣、結束畫面。
+- **回饋**：
+  - 換頭特效（洛斯爆衣）、三種出招特效、擊中火花、死亡爆散、雷射蓄力、弱點閃光、真正的閃白。
+  - 12 個合成音效，音量集中管理。
+- **畫面**：換頭台詞、開始畫面（含按鍵表）、開場文字卡、暫停畫面、結束畫面。
+- **打包**：Windows 版可以執行。
+
+### 沒有動到的東西
+- 攻擊前搖／判定／收招、冷卻、移動速度、Boss 參數都沒改。新加的參數都露出在 Inspector。
+- 沒有刪除任何既有素材或程式。停用的東西：
+  - 原本的終點門、`StageClearUI`；
+  - 除錯 HUD 和除錯外框；
+  - 展示櫃道具；
+  - 無人機和 Boss 原本的方塊零件。
+
+### Commit（分支 `demo/art-pass`，沒有 push）
+
+| Commit | 內容 |
+|---|---|
+| 152c057 | docs: add demo plan, world and art style docs |
+| 53c36d6 | feat: sprite-gen atlas importer and character animation |
+| 2ab2795 | art: add environment, enemy, boss and prop assets |
+| 7d74c2f | feat: integrate environment, enemies and Talos visuals |
+| 297b355 | feat: assemble level 1 with tutorial, checkpoint and ending |
+| 20c5fe3 | feat: VFX, SFX, head-switch barks and UI screens |
+| （這次） | docs: add README and demo build notes |
+
 ## 需要你決定的事
 
 - **主角大小**：要不要把 Player 的 `Visual/ArtRoot` 縮放從 1.75 改回 1？改回 1 的話主角跟碰撞體一樣高，敵人和 Boss 的比例就會符合設定。目前沒有改。
 - **三顆頭的識別色**：文件沒有指定，我先訂成賽 淺藍 `#73BFFF`、伯特 橘 `#FFB061`、洛斯 紅 `#FF524D`。換頭特效、台詞名字、擊中火花都用這組。要改的話在 Player 的 `PlayerPresentation` → Heads。
 - 洛斯攻擊的出招格比判定晚 0.11～0.2 秒（見階段 1 的表格）：要調程式的前搖，還是調動畫格的時間？
-
-（目前沒有）
+- **Unity 服務開關**：打包時 Unity 把 `ProjectSettings/UnityConnectSettings.asset` 的 `m_Enabled` 改成 1，我還原成 0 了。如果你有用 Unity Cloud 服務，請自己決定要不要開。
+- **實際試玩**：請從開始畫面完整玩一次，確認難度和長度（目標 2～4 分鐘）。
