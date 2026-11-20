@@ -1,3 +1,4 @@
+using System;
 using Cerberus.Combat;
 using UnityEngine;
 
@@ -38,6 +39,10 @@ namespace Cerberus.Enemies
         public bool HasTarget => Target != null;
         public float DetectionRadius => detectionRadius;
         public Health Health { get; private set; }
+        /// <summary>受擊閃白中（給 SpriteFlash 之類的外觀元件讀）</summary>
+        public bool IsHitFlashing => Time.time < hitFlashUntil;
+        /// <summary>任何敵人死亡時通知（死亡特效、音效用）</summary>
+        public static event Action<EnemyBase> AnyDied;
 
         /// <summary>給除錯標籤顯示；死亡、硬直這些共通狀態優先於子類別自己的行為狀態</summary>
         public string StateName
@@ -149,6 +154,7 @@ namespace Cerberus.Enemies
                 dealer.enabled = false;
 
             OnDied();
+            AnyDied?.Invoke(this);
             Destroy(gameObject, deathLingerDuration);
         }
 

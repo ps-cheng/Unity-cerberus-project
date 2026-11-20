@@ -37,7 +37,8 @@ namespace Cerberus.Feedback
         private void Resume()
         {
             IsActive = false;
-            Time.timeScale = 1f;
+            // 暫停中途結束 hit-stop 時保持暫停
+            Time.timeScale = GamePause.IsPaused ? 0f : 1f;
         }
     }
 }

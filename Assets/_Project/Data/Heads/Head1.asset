@@ -20,3 +20,5 @@ MonoBehaviour:
   animatorOverride: {fileID: 22100000, guid: 7dd4e5b81caebdc43b3226fdd1b6d4b8, type: 2}
   idleCycleDuration: 1
   walkAnimationSpeedMultiplier: 1
+  specialHoldFrame: 1
+  transformedSprites: []

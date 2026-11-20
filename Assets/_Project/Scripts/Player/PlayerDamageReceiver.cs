@@ -106,6 +106,9 @@ namespace Cerberus.Player
 
         private float GetAwayDirection(DamageInfo info) => Mathf.Sign(transform.position.x - info.sourcePosition.x);
 
+        /// <summary>重生點（例如經過的檢查點）。死亡後回到這裡</summary>
+        public void SetRespawnPoint(Vector2 position) => spawnPosition = position;
+
         private void HandleDied()
         {
             isDead = true;

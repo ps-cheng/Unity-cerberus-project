@@ -1,5 +1,6 @@
 using Cerberus.Combat;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Cerberus.Player
 {
@@ -15,14 +16,17 @@ namespace Cerberus.Player
         public AttackData heavyAttack;
         public SpecialAbilityData special;
 
-        [Header("Visual")]
-        [Tooltip("待機時的身體顏色，出招時仍會依階段變色")]
-        public Color bodyColor = new Color(0.55f, 0.35f, 0.25f);
-        [Tooltip("這顆頭的像素動畫（共用 Player Animator Controller 的 Override）。留空則顯示方塊外觀")]
+        [Header("Animation")]
+        [Tooltip("這顆頭的動畫（共用 Player Animator Controller 的 Override）")]
         public AnimatorOverrideController animatorOverride;
-        [Tooltip("idle 播完一個循環的秒數，例如 1 = 一秒一個循環。0 = 用 Aseprite 裡設定的原速")]
+        [Tooltip("idle 播完一個循環的秒數，例如 1 = 一秒一個循環。0 = 用圖集 manifest 的 fps")]
         [Min(0f)] public float idleCycleDuration = 1f;
-        [Tooltip("walk 播放速度 = 水平速度 ÷ 最高移動速度 × 這個倍率。腳步在滑就調大，踩太快就調小")]
-        [Min(0f)] public float walkAnimationSpeedMultiplier = 1f;
+        [Tooltip("run 播放速度 = 水平速度 ÷ 最高移動速度 × 這個倍率。腳步在滑就調大，踩太快就調小")]
+        [FormerlySerializedAs("walkAnimationSpeedMultiplier")]
+        [Min(0f)] public float runAnimationSpeedMultiplier = 1f;
+        [Tooltip("按住特殊鍵期間停在特殊動作的第幾格（從 0 起算），例如格檔舉盾那一格。-1 = 不停")]
+        public int specialHoldFrame = -1;
+        [Tooltip("變身期間替換用的 sprite，名稱要和一般版同序，只差開頭的角色名（例如 Rus_idle_0 ↔ RusBerserk_idle_0）")]
+        public Sprite[] transformedSprites;
     }
 }

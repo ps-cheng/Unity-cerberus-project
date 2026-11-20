@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ccea332cf28ea146a92e2cb32d588ae, type: 3}
+  m_Name: CerberusCharacters
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::Cerberus.EditorTools.SpriteGenImport.SpriteGenImportProfile
+  runsRoot: D:\Codex\sprite-work\runs
+  atlasFolder: Assets/Art/Characters
+  clipFolder: Assets/_Project/Art/Animations/Player
+  pixelsPerUnit: 128
+  sharedController: {fileID: 9100000, guid: 001cccbcef4b40b4591619c9ac787cbe, type: 2}
+  states:
+  - stateName: idle
+    speedParameter: IdleSpeed
+    speed: 1
+  - stateName: run
+    speedParameter: RunSpeed
+    speed: 1
+  - stateName: light-attack
+    speedParameter: AttackSpeed
+    speed: 1
+  - stateName: heavy-attack
+    speedParameter: AttackSpeed
+    speed: 1
+  - stateName: jump
+    speedParameter: 
+    speed: 0
+  - stateName: special
+    speedParameter: SpecialSpeed
+    speed: 1
+  characters:
+  - characterId: Cer
+    overrideController: {fileID: 22100000, guid: 7dd4e5b81caebdc43b3226fdd1b6d4b8, type: 2}
+    variants: []
+  - characterId: Ber
+    overrideController: {fileID: 22100000, guid: be8db32ad4e6042479a12d0f1c61af59, type: 2}
+    variants: []
+  - characterId: Rus
+    overrideController: {fileID: 22100000, guid: edaecbe8bd9735a4cb398eb9d6d2aed0, type: 2}
+    variants:
+    - suffix: Berserk
+      relativeSheetPath: variants/berserk/sprite-sheet-alpha.png

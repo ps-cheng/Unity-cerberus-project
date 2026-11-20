@@ -30,6 +30,10 @@ namespace Cerberus.Player
 
         private void Update()
         {
+            // 暫停中不讀輸入，也不改移動狀態，恢復後接著原本的狀態
+            if (Cerberus.Feedback.GamePause.IsPaused)
+                return;
+
             if (damageReceiver.IsStunned || !isInputEnabled)
             {
                 movement.SetMoveInput(0f);

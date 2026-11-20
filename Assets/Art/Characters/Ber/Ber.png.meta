@@ -1,0 +1,860 @@
+fileFormatVersion: 2
+guid: 89b033c1e39698c41893bf57fec1a93b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7000259358461462895
+    second: Ber_0
+  - first:
+      213: 5255710869896802213
+    second: Ber_1
+  - first:
+      213: -1999357707179177262
+    second: Ber_2
+  - first:
+      213: 2334183430204363534
+    second: Ber_3
+  - first:
+      213: -4407563055930199133
+    second: Ber_4
+  - first:
+      213: -6428867153917610420
+    second: Ber_5
+  - first:
+      213: -7826691586079013249
+    second: Ber_6
+  - first:
+      213: 9207863040903413303
+    second: Ber_7
+  - first:
+      213: -5623615850391241851
+    second: Ber_8
+  - first:
+      213: -8896931258549665100
+    second: Ber_9
+  - first:
+      213: -7817868355564714947
+    second: Ber_10
+  - first:
+      213: 6928237444853530182
+    second: Ber_11
+  - first:
+      213: 8144191374629981084
+    second: Ber_12
+  - first:
+      213: 4963957936632095960
+    second: Ber_13
+  - first:
+      213: 3865745309744714717
+    second: Ber_14
+  - first:
+      213: -4280369253637277533
+    second: Ber_15
+  - first:
+      213: -2324730937865204038
+    second: Ber_16
+  - first:
+      213: 7823562657669954985
+    second: Ber_17
+  - first:
+      213: -5699123244268151677
+    second: Ber_18
+  - first:
+      213: 7772344571521880532
+    second: Ber_19
+  - first:
+      213: -5180639928246601982
+    second: Ber_20
+  - first:
+      213: -8301748460171480555
+    second: Ber_21
+  - first:
+      213: -4199268824828939655
+    second: Ber_22
+  - first:
+      213: 5045788794736592540
+    second: Ber_23
+  - first:
+      213: -1782946899332095317
+    second: Ber_24
+  - first:
+      213: 3010480134740543273
+    second: Ber_25
+  - first:
+      213: 8180064600033872599
+    second: Ber_26
+  - first:
+      213: -6104628580645911167
+    second: Ber_27
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Ber_idle_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afa14c6b521d52c408d9e24117bddb8a
+      internalID: 37022558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_idle_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1280
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a650d3834f84eaf40b84ea0053504b25
+      internalID: -1689687709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_idle_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1280
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0fe3e00afd8afc4296f1f4604b8894f
+      internalID: -24395573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_idle_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1280
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1183b03d43705543aacfec8d5272eaf
+      internalID: 671807083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_light-attack_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0759e15a449d1948ba754385dee3bdf
+      internalID: 390560444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_light-attack_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1024
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a232cb65e68c61c48baf535d4ca0080f
+      internalID: -1478159152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_light-attack_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1024
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6dc302560f1253945904819e909ba55a
+      internalID: -380348818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_light-attack_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1024
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 995c3ff0c781c9047983d8a89bcb1f5f
+      internalID: 1482469875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37a1520389a18de4c8b3f48f1ce41669
+      internalID: -339417342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d366fd3d9efe02541a0d9f0b83b7ec72
+      internalID: -1390815899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f47cf1c83f18dd4c8db9951bb97be6d
+      internalID: 1185046433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc76036367cf5f64aba908a7a092696c
+      internalID: 593573061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_4
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f214dfc37eec0af4ea6460093045303a
+      internalID: -2110742063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_5
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa997a42d912c034e9279b9086d7628b
+      internalID: 1884946593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_6
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f6f33057c446724384adfe1c1529829
+      internalID: -1631401332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_heavy-attack_7
+      rect:
+        serializedVersion: 2
+        x: 2688
+        y: 768
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b8d80728be4a7642bfc441639d19e27
+      internalID: 1700359964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_special_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82b7a8be64b33c34fa087c2a137689ea
+      internalID: 1150992180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_special_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 512
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9c94edc39d245d48b42b6b8508ef3aa
+      internalID: 1378562967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_special_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09d0b1154b0e232408fc824790cd3bc0
+      internalID: -1945890547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_special_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 512
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63458235dfd27e246bac9ae444801f21
+      internalID: 1466760409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_jump_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2da1452374954494b87e954889a020f9
+      internalID: -987949182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_jump_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 256
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd1ffcd1700650e4dbb6d901a99b8adf
+      internalID: -1274413499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_jump_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 256
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3111e0e7169729046b63c9dcc28ce861
+      internalID: 552124324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_jump_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 256
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fde7b658bef21444781cbc6259174dd1
+      internalID: 969818054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_run_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 755ec578eaef9c142b66b95c5e9a3c3a
+      internalID: 1997118066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_run_1
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0615cadb35c06034b9b056f0fbf150de
+      internalID: 749792291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_run_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c15f8052eac673948bb5bd11025a649f
+      internalID: 1857116122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ber_run_3
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 0
+        width: 384
+        height: 256
+      alignment: 9
+      pivot: {x: 0.5, y: 0.09765625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d7de71e5a75c0e4aa823f5b907d5627
+      internalID: 1017319369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 2d6f0e9cc635b9840854f897ee0cceec
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Ber_heavy-attack_0: -339417342
+      Ber_heavy-attack_1: -1390815899
+      Ber_heavy-attack_2: 1185046433
+      Ber_heavy-attack_3: 593573061
+      Ber_heavy-attack_4: -2110742063
+      Ber_heavy-attack_5: 1884946593
+      Ber_heavy-attack_6: -1631401332
+      Ber_heavy-attack_7: 1700359964
+      Ber_idle_0: 37022558
+      Ber_idle_1: -1689687709
+      Ber_idle_2: -24395573
+      Ber_idle_3: 671807083
+      Ber_jump_0: -987949182
+      Ber_jump_1: -1274413499
+      Ber_jump_2: 552124324
+      Ber_jump_3: 969818054
+      Ber_light-attack_0: 390560444
+      Ber_light-attack_1: -1478159152
+      Ber_light-attack_2: -380348818
+      Ber_light-attack_3: 1482469875
+      Ber_run_0: 1997118066
+      Ber_run_1: 749792291
+      Ber_run_2: 1857116122
+      Ber_run_3: 1017319369
+      Ber_special_0: 1150992180
+      Ber_special_1: 1378562967
+      Ber_special_2: -1945890547
+      Ber_special_3: 1466760409
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
