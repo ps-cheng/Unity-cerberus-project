@@ -374,6 +374,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2394770868313838106}
+  - component: {fileID: 4900234953517931184}
   m_Layer: 10
   m_Name: Visual
   m_TagString: Untagged
@@ -399,6 +400,30 @@ Transform:
   - {fileID: 4301250895288034166}
   m_Father: {fileID: 5263624027918429329}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4900234953517931184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2421105553623862980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d4a5245ff6144c458bf4790da99978b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Feedback.SpriteFlash
+  flashMaterial: {fileID: 2100000, guid: e40a6c073f5612240ac59787a4b3975a, type: 2}
+  renderers:
+  - {fileID: 5102082491129217229}
+  - {fileID: 4162444443081246401}
+  - {fileID: 2547736572536371327}
+  - {fileID: 2584397637115596923}
+  - {fileID: 322561051916621452}
+  - {fileID: 5202826542768711860}
+  - {fileID: 7004849903631635322}
+  - {fileID: 8230698005446186164}
+  enemy: {fileID: 0}
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2581614140042736128
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,6 +526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 410771496653552550}
   - component: {fileID: 411409623556080725}
+  - component: {fileID: 5776174310237193392}
   m_Layer: 10
   m_Name: TentacleTemplate
   m_TagString: Untagged
@@ -541,6 +567,27 @@ MonoBehaviour:
   laser: {fileID: 234208622419649721}
   tipRenderer: {fileID: 4495189231491713602}
   chargeSwellScale: 1.6
+--- !u!114 &5776174310237193392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2651104611018033935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcdb390458b9393488633a9f8445d577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cerberus.Enemies.LaserPresentation
+  laser: {fileID: 234208622419649721}
+  glow: {fileID: 4731618855504699999}
+  aimGlowScale: 0.5
+  chargedGlowScale: 1.8
+  chargeColor: {r: 1, g: 0.3, b: 0.35, a: 0.9}
+  lockedColor: {r: 1, g: 0.95, b: 0.95, a: 1}
+  maxFlickerFrequency: 18
+  fireGlowScale: 1.1
+  soundVolume: 0.7
 --- !u!1 &2786029362472966126
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,7 +833,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.7, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 270636033621390213}
   m_Father: {fileID: 410771496653552550}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4495189231491713602
@@ -1795,6 +1843,98 @@ MonoBehaviour:
   cueWidth: 0.06
   beamWidth: 0.3
   beamColor: {r: 1, g: 0.35, b: 0.4, a: 1}
+--- !u!1 &5741290962086235369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 270636033621390213}
+  - component: {fileID: 4731618855504699999}
+  m_Layer: 0
+  m_Name: ChargeGlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &270636033621390213
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5741290962086235369}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5013148512699989285}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &4731618855504699999
+SpriteRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5741290962086235369}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 0ab08e14b4405bd41b6e509a869f4af5, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 10
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -1497594696196452250, guid: c06febc682aac8b4b8bc798551ffb465, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 2.42, y: 2.42}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
 --- !u!1 &7158236584289986500
 GameObject:
   m_ObjectHideFlags: 0

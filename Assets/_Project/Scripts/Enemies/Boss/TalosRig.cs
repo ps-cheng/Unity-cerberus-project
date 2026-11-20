@@ -1,3 +1,4 @@
+using Cerberus.Feedback;
 using UnityEngine;
 
 namespace Cerberus.Enemies.Boss
@@ -63,6 +64,8 @@ namespace Cerberus.Enemies.Boss
                 glowBaseScale = weakPointGlow.transform.localScale;
         }
 
+        private bool wasExposed;
+
         private void LateUpdate()
         {
             float speed = body.simulated ? Mathf.Abs(body.linearVelocity.x) : 0f;
@@ -86,6 +89,12 @@ namespace Cerberus.Enemies.Boss
         private void UpdateWeakPoint()
         {
             bool isExposed = boss.CurrentState == boss.exposed;
+
+            // 露出弱點的瞬間閃一下，提醒玩家「現在可以打腳」
+            if (isExposed && !wasExposed && CombatVfx.Instance != null)
+                CombatVfx.Instance.WeakPointFlash(weakPointRenderer.transform.position);
+            wasExposed = isExposed;
+
             float pulse = isExposed ? 0.5f + 0.5f * Mathf.Sin(Time.time * weakPointPulseFrequency * Mathf.PI * 2f) : 0f;
 
             weakPointRenderer.color = isExposed ? Color.Lerp(weakPointLitColor * 0.8f, weakPointLitColor, pulse) : weakPointDimColor;
