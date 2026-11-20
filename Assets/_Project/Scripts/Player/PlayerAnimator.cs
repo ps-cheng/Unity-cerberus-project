@@ -13,7 +13,6 @@ namespace Cerberus.Player
     /// - 開關型特殊動作（變身）開啟時正著播、關閉時倒著播；移動或出招會打斷，只有站著不動才看得到完整動畫。
     ///   變身期間把 sprite 換成 HeadConfig 裡的變身版（同名同序）。
     /// - 換頭時接續目前狀態與進度，不讓動畫從頭開始。
-    /// 頭沒有設定 Override 時，改顯示原本的方塊外觀。
     /// </summary>
     public class PlayerAnimator : MonoBehaviour
     {
@@ -39,10 +38,8 @@ namespace Cerberus.Player
         [Header("References")]
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerCombat combat;
-        [Tooltip("掛著 SpriteRenderer 的角色圖物件，頭沒有動畫時會整個隱藏")]
+        [Tooltip("掛著 SpriteRenderer 的角色圖物件")]
         [SerializeField] private Animator animator;
-        [Tooltip("頭有角色圖時隱藏的方塊外觀（身體、頭、裝備）")]
-        [SerializeField] private GameObject[] placeholderParts;
 
         [Header("Base Clips (共用 Controller 裡各狀態原本的 clip，用來查 Override 換上的 clip)")]
         [SerializeField] private AnimationClip baseIdleClip;
@@ -99,18 +96,16 @@ namespace Cerberus.Player
 
         private void ApplyHead(HeadConfig head, bool keepProgress)
         {
-            bool hasArt = head.animatorOverride != null;
-            foreach (GameObject part in placeholderParts)
-                part.SetActive(!hasArt);
-
             // 換 Controller 會把 Animator 重置回預設狀態，所以先記下目前的狀態與進度
             bool canResume = keepProgress && mode == Mode.Locomotion && animator.isActiveAndEnabled && animator.runtimeAnimatorController != null;
             AnimatorStateInfo previous = canResume ? animator.GetCurrentAnimatorStateInfo(0) : default;
 
-            animator.gameObject.SetActive(hasArt);
             transformedLookup.Clear();
-            if (!hasArt)
+            if (head.animatorOverride == null)
+            {
+                Debug.LogWarning($"{head.name} 沒有設定 Animator Override，沿用目前的動畫", head);
                 return;
+            }
 
             animator.runtimeAnimatorController = head.animatorOverride;
             UpdateSpeedParameters();

@@ -15,10 +15,8 @@ namespace Cerberus.Player
         public AttackData heavyAttack;
         public SpecialAbilityData special;
 
-        [Header("Visual")]
-        [Tooltip("待機時的身體顏色，出招時仍會依階段變色")]
-        public Color bodyColor = new Color(0.55f, 0.35f, 0.25f);
-        [Tooltip("這顆頭的像素動畫（共用 Player Animator Controller 的 Override）。留空則顯示方塊外觀")]
+        [Header("Animation")]
+        [Tooltip("這顆頭的動畫（共用 Player Animator Controller 的 Override）")]
         public AnimatorOverrideController animatorOverride;
         [Tooltip("idle 播完一個循環的秒數，例如 1 = 一秒一個循環。0 = 用 Aseprite 裡設定的原速")]
         [Min(0f)] public float idleCycleDuration = 1f;
