@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Base_attack_light
+  m_Name: Base_light-attack
   serializedVersion: 8
   m_Legacy: 0
   m_Compressed: 0

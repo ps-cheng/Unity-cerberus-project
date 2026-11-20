@@ -19,13 +19,13 @@ namespace Cerberus.Player
         private enum Mode { Locomotion, Attack, Special }
 
         private static readonly int IdleState = Animator.StringToHash("Base Layer.idle");
-        private static readonly int WalkState = Animator.StringToHash("Base Layer.walk");
+        private static readonly int RunState = Animator.StringToHash("Base Layer.run");
         private static readonly int JumpState = Animator.StringToHash("Base Layer.jump");
-        private static readonly int LightAttackState = Animator.StringToHash("Base Layer.attack_light");
-        private static readonly int HeavyAttackState = Animator.StringToHash("Base Layer.attack_heavy");
+        private static readonly int LightAttackState = Animator.StringToHash("Base Layer.light-attack");
+        private static readonly int HeavyAttackState = Animator.StringToHash("Base Layer.heavy-attack");
         private static readonly int SpecialState = Animator.StringToHash("Base Layer.special");
         private static readonly int IdleSpeedParam = Animator.StringToHash("IdleSpeed");
-        private static readonly int WalkSpeedParam = Animator.StringToHash("WalkSpeed");
+        private static readonly int RunSpeedParam = Animator.StringToHash("RunSpeed");
         private static readonly int AttackSpeedParam = Animator.StringToHash("AttackSpeed");
         private static readonly int SpecialSpeedParam = Animator.StringToHash("SpecialSpeed");
 
@@ -295,7 +295,7 @@ namespace Cerberus.Player
                 return;
             }
 
-            int target = moving ? WalkState : IdleState;
+            int target = moving ? RunState : IdleState;
             if (locomotionState == target)
                 return;
 
@@ -321,7 +321,7 @@ namespace Cerberus.Player
         {
             HeadConfig head = combat.Head;
             float speed = Mathf.Abs(movement.Velocity.x);
-            animator.SetFloat(WalkSpeedParam, movement.MoveSpeed > 0f ? speed / movement.MoveSpeed * head.walkAnimationSpeedMultiplier : 1f);
+            animator.SetFloat(RunSpeedParam, movement.MoveSpeed > 0f ? speed / movement.MoveSpeed * head.runAnimationSpeedMultiplier : 1f);
 
             // 每幀重算，Play Mode 中改 HeadConfig 的數值可以馬上看到效果
             float idleLength = GetClip(baseIdleClip).length;
