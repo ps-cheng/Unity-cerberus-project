@@ -20,6 +20,26 @@ namespace Cerberus.Cameras
         [SerializeField] private Rect levelBounds = new Rect(-1f, -4f, 112f, 24f);
 
         private Vector2 velocity;
+        private Rect defaultBounds;
+        private bool hasDefaultBounds;
+
+        /// <summary>暫時改用另一個範圍（例如 Boss 房鎖住畫面），ResetBounds 還原</summary>
+        public void SetBounds(Rect bounds)
+        {
+            if (!hasDefaultBounds)
+            {
+                defaultBounds = levelBounds;
+                hasDefaultBounds = true;
+            }
+
+            levelBounds = bounds;
+        }
+
+        public void ResetBounds()
+        {
+            if (hasDefaultBounds)
+                levelBounds = defaultBounds;
+        }
 
         private void Start()
         {
